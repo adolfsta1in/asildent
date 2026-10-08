@@ -64,7 +64,7 @@ export function LocalizedInput({
   return (
     <fieldset>
       <legend className="mb-1.5 text-sm font-semibold text-ink">{label}</legend>
-      <div className="grid gap-2 md:grid-cols-2">
+      <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
         {(["ru", "ky"] as const).map((lang) => (
           <div key={lang} className="relative">
             <label htmlFor={`${id}-${lang}`} className="sr-only">

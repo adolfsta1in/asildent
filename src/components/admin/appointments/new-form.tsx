@@ -85,7 +85,7 @@ export function NewAppointmentForm({
   const err = (k: string) => errors[k] && <p className="mt-1.5 text-sm text-destructive">{errors[k]}</p>;
 
   return (
-    <form onSubmit={submit} className="grid gap-6 lg:grid-cols-2">
+    <form onSubmit={submit} className="grid grid-cols-1 gap-6 lg:grid-cols-2">
       <fieldset className="space-y-4 rounded-3xl border bg-card p-5 sm:p-6">
         <legend className="sr-only">Услуга, врач и время</legend>
         <div>

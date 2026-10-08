@@ -23,8 +23,8 @@ export async function ContactDetails({ clinic, locale }: { clinic: ClinicSetting
   ].filter(Boolean) as { href: string; label: string; Icon: typeof WhatsAppIcon; color: string }[];
 
   return (
-    <div className="grid gap-4 lg:grid-cols-[0.9fr_1.1fr]">
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1">
+    <div className="grid grid-cols-1 gap-4 lg:grid-cols-[0.9fr_1.1fr]">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-1">
         <div className="rounded-3xl border bg-card p-6 sm:p-7">
           <h3 className="flex items-center gap-2 text-sm font-semibold tracking-wide text-muted-foreground uppercase">
             <MapPin className="size-4 text-primary" aria-hidden /> {t("address")}

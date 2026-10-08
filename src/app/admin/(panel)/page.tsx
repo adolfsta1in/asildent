@@ -58,7 +58,7 @@ export default async function DashboardPage() {
         }
       />
 
-      <div className="grid gap-3 sm:grid-cols-3">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
         {stats.map(({ label, value, href, Icon, accent }) => (
           <Link
             key={label}
@@ -74,7 +74,7 @@ export default async function DashboardPage() {
         ))}
       </div>
 
-      <div className="mt-8 grid gap-6 lg:grid-cols-[1.4fr_1fr]">
+      <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-[1.4fr_1fr]">
         <section aria-labelledby="upcoming" className="rounded-3xl border bg-card">
           <div className="flex items-center justify-between border-b px-5 py-4">
             <h2 id="upcoming" className="text-lg font-bold">

@@ -23,7 +23,7 @@ export function StepDoctor({
   }
 
   return (
-    <ul className="grid gap-2.5 sm:grid-cols-2">
+    <ul className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
       {doctors.length > 1 && (
         <li className="sm:col-span-2">
           <OptionCard selected={selected === "any"} onClick={() => onSelect("any")}>

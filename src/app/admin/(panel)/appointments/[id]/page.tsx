@@ -61,7 +61,7 @@ export default async function AppointmentPage({ params }: PageProps<"/admin/appo
         </div>
         <dl className="divide-y px-5 sm:px-6">
           {rows.map(([k, v]) => (
-            <div key={k} className="grid gap-1 py-3 sm:grid-cols-[12rem_1fr]">
+            <div key={k} className="grid grid-cols-1 gap-1 py-3 sm:grid-cols-[12rem_1fr]">
               <dt className="text-sm text-muted-foreground">{k}</dt>
               <dd className="font-medium text-ink">{v}</dd>
             </div>

@@ -71,7 +71,7 @@ export function StepService({
             <h3 id={`bk-cat-${g.id}`} className="mb-3 font-sans text-xs font-semibold tracking-[0.14em] text-muted-foreground uppercase">
               {g.name}
             </h3>
-            <ul className="grid gap-2.5 sm:grid-cols-2">
+            <ul className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
               {g.items.map((s) => (
                 <li key={s.id}>
                   <OptionCard

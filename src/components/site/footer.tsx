@@ -25,8 +25,8 @@ export async function Footer({ clinic, locale }: { clinic: ClinicSettings; local
   ].filter(Boolean) as { href: string; label: string; Icon: typeof WhatsAppIcon }[];
 
   return (
-    <footer className="bg-ink text-white/90">
-      <div className="container-page grid gap-10 py-14 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1fr] lg:py-16">
+    <footer className="bg-ink pb-20 text-white/90 lg:pb-0">
+      <div className="container-page grid grid-cols-1 gap-10 py-14 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1fr] lg:py-16">
         <div className="space-y-5">
           <Logo name={clinic.shortName} logoUrl={clinic.logoUrl} inverted />
           <p className="max-w-xs text-sm leading-relaxed text-white/65">{tr(clinic.tagline, locale)}</p>

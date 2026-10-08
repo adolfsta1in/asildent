@@ -37,7 +37,7 @@ export async function PopularServices({ locale }: { locale: Locale }) {
             </Button>
           }
         />
-        <ul className="grid gap-x-10 md:grid-cols-2">
+        <ul className="grid grid-cols-1 gap-x-10 md:grid-cols-2">
           {popular.map((s) => (
             <Reveal as="li" key={s.id} className="border-b border-border/80">
               <ServiceRow

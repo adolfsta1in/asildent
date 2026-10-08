@@ -66,7 +66,7 @@ export function ExceptionsEditor({ doctorId, exceptions, today }: { doctorId: st
             </button>
           ))}
         </div>
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
           <Field label={type === "DAY_OFF" ? "С даты" : "Дата"} htmlFor="ex-from">
             <Input id="ex-from" type="date" min={today} value={from} onChange={(e) => setFrom(e.target.value)} />
           </Field>

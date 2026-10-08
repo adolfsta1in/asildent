@@ -30,7 +30,7 @@ export async function Benefits({ locale }: { locale: Locale }) {
     <section className="section" aria-labelledby="benefits-title">
       <div className="container-page">
         <SectionHeading id="benefits-title" eyebrow={t("eyebrow")} title={t("title")} />
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
           {/* Первый пункт — главный аргумент, выделен крупно (2×2 на десктопе) */}
           <Reveal className="relative flex flex-col justify-between overflow-hidden rounded-3xl bg-ink p-8 text-white md:col-span-2 lg:row-span-2 lg:p-10">
             <div
@@ -38,13 +38,13 @@ export async function Benefits({ locale }: { locale: Locale }) {
               className="absolute -top-20 -right-20 size-64 rounded-full bg-primary opacity-40 blur-3xl"
             />
             <first.Icon className="relative size-10 text-primary-soft" aria-hidden />
-            <div className="relative mt-10 grid gap-8 lg:mt-16 lg:grid-cols-[1fr_1.05fr] lg:items-end">
-              <div>
+            <div className="relative mt-10 grid grid-cols-[minmax(0,1fr)] gap-8 lg:mt-16 lg:grid-cols-[1fr_1.05fr] lg:items-end">
+              <div className="min-w-0">
                 <h3 className="font-heading text-2xl font-bold text-white sm:text-3xl">{t(`items.${first.key}.title`)}</h3>
                 <p className="mt-4 text-base leading-relaxed text-white/75">{t(`items.${first.key}.text`)}</p>
               </div>
               {planRows.length > 0 && (
-                <ul className="rotate-[-1.5deg] rounded-2xl bg-card p-2 text-ink shadow-lift" aria-hidden>
+                <ul className="min-w-0 rotate-[-1.5deg] rounded-2xl bg-card p-2 text-ink shadow-lift" aria-hidden>
                   {planRows.map((s, i) => (
                     <li key={s.id} className="flex items-center gap-3 rounded-xl px-3 py-3 odd:bg-muted/70">
                       <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground">

@@ -37,7 +37,7 @@ export default async function DoctorsPage() {
     <>
       <PageHeader locale={locale} crumbs={[{ label: tn("doctors"), href: "/vrachi" }]} title={t("title")} lead={t("lead")} />
       <div className="container-page pb-8">
-        <ul className="grid gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
+        <ul className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
           {doctors.map((d, i) => {
             const name = tr(d.name, locale);
             return (

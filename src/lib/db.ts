@@ -8,7 +8,8 @@ function createClient() {
   if (!url) throw new Error("DATABASE_URL не задан");
   // Адаптер выбирается по строке подключения: file:… — SQLite, postgres://… — PostgreSQL.
   const adapter = url.startsWith("postgres")
-    ? new PrismaPg({ connectionString: url })
+    ? // Serverless: каждая функция держит свой пул, поэтому он маленький (иначе упрёмся в лимит соединений пулера).
+      new PrismaPg({ connectionString: url, max: Number(process.env.DB_POOL_MAX ?? 3) })
     : new PrismaBetterSqlite3({ url });
   return new PrismaClient({ adapter });
 }

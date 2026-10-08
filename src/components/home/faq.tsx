@@ -13,7 +13,7 @@ export async function Faq({ locale }: { locale: Locale }) {
 
   return (
     <section className="section" aria-labelledby="faq-title">
-      <div className="container-page grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16">
+      <div className="container-page grid grid-cols-1 gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16">
         <SectionHeading id="faq-title" eyebrow={t("eyebrow")} title={t("title")} className="lg:sticky lg:top-28 lg:self-start" />
         <div className="divide-y rounded-3xl border bg-card px-2 sm:px-4">
           {faqs.map((f) => (

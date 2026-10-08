@@ -49,7 +49,7 @@ export function SettingsForm({ clinic, telegram }: { clinic: ClinicConfig; teleg
   return (
     <form action={action} className="space-y-5">
       <Section title="Цветовая тема" description="Применяется ко всему сайту и админке. Выберите — и посмотрите превью прямо здесь.">
-        <div role="radiogroup" aria-label="Тема" className="grid gap-3 sm:grid-cols-3">
+        <div role="radiogroup" aria-label="Тема" className="grid grid-cols-1 gap-3 sm:grid-cols-3">
           {THEME_IDS.map((id) => {
             const t = THEMES[id];
             const active = theme === id;
@@ -92,7 +92,7 @@ export function SettingsForm({ clinic, telegram }: { clinic: ClinicConfig; teleg
               Записаться
             </span>
           </div>
-          <div className="grid gap-3 p-4 sm:grid-cols-[1.3fr_1fr]">
+          <div className="grid grid-cols-1 gap-3 p-4 sm:grid-cols-[1.3fr_1fr]">
             <div>
               <p className="font-heading text-xl font-bold" style={{ color: THEMES[theme].tokens.ink }}>
                 {clinic.tagline.ru}
@@ -115,7 +115,7 @@ export function SettingsForm({ clinic, telegram }: { clinic: ClinicConfig; teleg
       </Section>
 
       <Section title="Клиника">
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <Field label="Название" htmlFor="name" error={e.name}>
             <Input id="name" name="name" defaultValue={clinic.name} required />
           </Field>
@@ -164,7 +164,7 @@ export function SettingsForm({ clinic, telegram }: { clinic: ClinicConfig; teleg
       </Section>
 
       <Section title="Контакты">
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <Field label="Телефоны" htmlFor="phones" hint="Каждый с новой строки. Первый — основной (кнопка «Позвонить»).">
             <Textarea id="phones" name="phones" rows={3} defaultValue={clinic.phones.join("\n")} />
           </Field>
@@ -188,7 +188,7 @@ export function SettingsForm({ clinic, telegram }: { clinic: ClinicConfig; teleg
       </Section>
 
       <Section title="Карта 2GIS">
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <Field label="Широта" htmlFor="lat" error={e.lat}>
             <Input id="lat" name="lat" inputMode="decimal" defaultValue={clinic.lat} />
           </Field>
@@ -230,7 +230,7 @@ export function SettingsForm({ clinic, telegram }: { clinic: ClinicConfig; teleg
       </Section>
 
       <Section title="Онлайн-запись">
-        <div className="grid gap-4 sm:grid-cols-3">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
           <Field label="Минимум до визита, мин" htmlFor="bookingLeadMinutes" error={e.bookingLeadMinutes} hint="120 — записаться можно не раньше, чем через 2 часа">
             <Input id="bookingLeadMinutes" name="bookingLeadMinutes" type="number" min={0} step={15} defaultValue={clinic.bookingLeadMinutes} />
           </Field>
@@ -275,7 +275,7 @@ export function SettingsForm({ clinic, telegram }: { clinic: ClinicConfig; teleg
       </Section>
 
       <Section title="Цифры на сайте">
-        <div className="grid gap-4 sm:grid-cols-3">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
           <Field label="Год открытия" htmlFor="foundedYear" error={e.foundedYear}>
             <Input id="foundedYear" name="foundedYear" type="number" defaultValue={clinic.foundedYear} />
           </Field>
@@ -289,7 +289,7 @@ export function SettingsForm({ clinic, telegram }: { clinic: ClinicConfig; teleg
       </Section>
 
       <Section title="Юридические данные" description="Подставляются в политику конфиденциальности.">
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <Field label="Юрлицо" htmlFor="legalName">
             <Input id="legalName" name="legalName" defaultValue={clinic.legalName} />
           </Field>

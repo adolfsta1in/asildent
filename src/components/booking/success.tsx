@@ -72,7 +72,7 @@ export function Success({
             ))}
           </dl>
 
-          <div className="grid gap-2 border-t bg-surface/60 p-6 sm:grid-cols-2 sm:px-10">
+          <div className="grid grid-cols-1 gap-2 border-t bg-surface/60 p-6 sm:grid-cols-2 sm:px-10">
             <Button asChild size="lg">
               <a href={`/api/appointments/${booking.code}/ics?lang=${locale}`} download>
                 <CalendarPlus /> {t("success.addToCalendar")}

@@ -30,7 +30,7 @@ export default async function ServicesAdminPage() {
           </Button>
         }
       />
-      <div className="grid gap-6 xl:grid-cols-[1.5fr_1fr]">
+      <div className="grid grid-cols-1 gap-6 xl:grid-cols-[1.5fr_1fr]">
         <div className="space-y-6">
           {categories.map((c) => (
             <section key={c.id} aria-labelledby={`c-${c.id}`}>

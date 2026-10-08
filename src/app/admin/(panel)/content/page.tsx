@@ -14,7 +14,7 @@ export default async function ContentPage() {
   return (
     <>
       <PageTitle title="Отзывы и FAQ" description="Демо-отзывы помечены на сайте. Перед запуском замените их настоящими." />
-      <div className="grid gap-8 xl:grid-cols-2">
+      <div className="grid grid-cols-1 gap-8 xl:grid-cols-2">
         <ReviewsEditor
           reviews={reviews.map((r) => ({
             id: r.id,

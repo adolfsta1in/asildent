@@ -30,7 +30,7 @@ npx tsx supabase/demo-data.ts   # → supabase/out/static.sql и appts_*.sql
 
 ## Подключить сайт к этой базе
 
-1. Supabase → Project Settings → Database → Connection string → **Session pooler** (порт 5432).
+1. Supabase → Project Settings → Database → Connection string → **Transaction pooler** (порт 6543).
 2. Вставить строку в `.env` как `DATABASE_URL="postgresql://…"` (с паролем базы).
 3. В `prisma/schema.prisma` поменять `provider = "sqlite"` на `"postgresql"`, сгенерировать клиент
    (`npx prisma generate`) и отметить схему как уже применённую — см. README, раздел про PostgreSQL.

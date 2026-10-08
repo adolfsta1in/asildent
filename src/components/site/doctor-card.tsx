@@ -21,7 +21,7 @@ export function DoctorCard({ doctor, className, priority }: { doctor: DoctorCard
         seed={doctor.slug}
         alt={doctor.photoAlt}
         priority={priority}
-        className="aspect-[4/5] rounded-3xl transition-transform duration-500 group-hover:scale-[0.985]"
+        className="aspect-[4/3] rounded-3xl transition-transform sm:aspect-[4/5] duration-500 group-hover:scale-[0.985]"
       />
       <div className="mt-4 flex items-start justify-between gap-3 px-1">
         <div className="min-w-0">

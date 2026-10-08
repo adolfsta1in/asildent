@@ -52,7 +52,7 @@ function ReviewForm({ review, onDone }: { review?: ReviewItem; onDone?: () => vo
   return (
     <form action={action} className="space-y-4">
       {review && <input type="hidden" name="id" value={review.id} />}
-      <div className="grid gap-4 sm:grid-cols-[1fr_8rem]">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-[1fr_8rem]">
         <Field label="Автор" htmlFor={`a-${review?.id ?? "new"}`}>
           <Input id={`a-${review?.id ?? "new"}`} name="authorName" defaultValue={review?.authorName} required placeholder="Айжан К." />
         </Field>
@@ -62,7 +62,7 @@ function ReviewForm({ review, onDone }: { review?: ReviewItem; onDone?: () => vo
       </div>
       <LocalizedInput name="text" label="Текст отзыва" defaultValue={review?.text} multiline rows={4} required />
       <LocalizedInput name="serviceName" label="Услуга (подпись)" defaultValue={review?.serviceName ?? undefined} />
-      <div className="grid gap-2 sm:grid-cols-2">
+      <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
         <SwitchField name="isPublished" label="Опубликован" defaultChecked={review?.isPublished ?? true} />
         <SwitchField name="isDemo" label="Пометка «Демо»" defaultChecked={review?.isDemo ?? false} hint="Выключите для настоящих отзывов" />
       </div>

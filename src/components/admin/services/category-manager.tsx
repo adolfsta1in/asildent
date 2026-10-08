@@ -27,7 +27,7 @@ function CategoryRow({ c, first, last }: { c: Category; first: boolean; last: bo
     <li className="flex items-center gap-2 px-2 py-2 sm:px-3">
       <CategorySort id={c.id} first={first} last={last} label={c.name.ru} />
       {editing ? (
-        <form action={action} className="grid flex-1 gap-2 sm:grid-cols-[1fr_1fr_auto]">
+        <form action={action} className="grid grid-cols-1 flex-1 gap-2 sm:grid-cols-[1fr_1fr_auto]">
           <input type="hidden" name="id" value={c.id} />
           <Input name="name.ru" defaultValue={c.name.ru} aria-label="Название (русский)" required className="h-9" />
           <Input name="name.ky" defaultValue={c.name.ky} aria-label="Название (кыргызский)" placeholder="KG" className="h-9" />
@@ -77,7 +77,7 @@ export function CategoryManager({ categories }: { categories: Category[] }) {
           <CategoryRow key={c.id} c={c} first={i === 0} last={i === categories.length - 1} />
         ))}
       </ul>
-      <form action={action} key={categories.length} className="grid gap-2 sm:grid-cols-[1fr_1fr_auto]">
+      <form action={action} key={categories.length} className="grid grid-cols-1 gap-2 sm:grid-cols-[1fr_1fr_auto]">
         <Input name="name.ru" placeholder="Новая категория (RU)" aria-label="Новая категория (русский)" required />
         <Input name="name.ky" placeholder="KG" aria-label="Новая категория (кыргызский)" />
         <Button type="submit" variant="outline" className="h-11">

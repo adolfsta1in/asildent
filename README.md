@@ -88,7 +88,7 @@ npm run dev                   # http://localhost:3000, админка — /admin
 
 | Переменная | Значение |
 | --- | --- |
-| `DATABASE_URL` | Supabase → Project Settings → Database → Connection string → **Session pooler** (порт 5432) |
+| `DATABASE_URL` | Supabase → Project Settings → Database → Connection string → **Transaction pooler** (порт **6543**). Session pooler (5432) не подходит: у него лимит 15 соединений, а на Vercel каждая функция держит своё |
 | `SITE_URL` | адрес сайта без слэша, например `https://asildent.vercel.app` |
 | `ADMIN_PASSWORD` | пароль админки |
 | `SESSION_SECRET` | случайная строка от 32 символов (`openssl rand -hex 32`) |

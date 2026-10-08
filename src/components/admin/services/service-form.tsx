@@ -66,7 +66,7 @@ export function ServiceForm({
       </Section>
 
       <Section title="Цена и длительность">
-        <div className="grid gap-4 sm:grid-cols-3">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
           <Field label="Цена от, сом" htmlFor="priceFrom" error={e.priceFrom}>
             <Input id="priceFrom" name="priceFrom" type="number" min={0} step={50} required defaultValue={service?.priceFrom ?? 1000} />
           </Field>
@@ -80,7 +80,7 @@ export function ServiceForm({
       </Section>
 
       <Section title="Врачи" description="Кто оказывает услугу — к ним можно записаться онлайн.">
-        <div className="grid gap-1 sm:grid-cols-2">
+        <div className="grid grid-cols-1 gap-1 sm:grid-cols-2">
           {doctors.map((d) => (
             <label key={d.id} className="flex cursor-pointer items-center gap-3 rounded-xl px-2 py-2 hover:bg-muted">
               <input

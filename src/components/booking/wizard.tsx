@@ -124,7 +124,7 @@ export function BookingWizard({ data }: { data: WizardData }) {
     doctorBySlug && !service ? data.services.filter((s) => s.doctorIds.includes(doctorBySlug.id)) : data.services;
 
   return (
-    <div className="grid gap-8 lg:grid-cols-[1fr_22rem] lg:gap-10">
+    <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1fr_22rem] lg:gap-10">
       <div className="min-w-0">
         <StepIndicator current={stepIndex} onSelect={goToStep} />
 

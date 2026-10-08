@@ -44,7 +44,7 @@ export function DoctorForm({ doctor }: { doctor?: DoctorFormValues }) {
             ky: doctor?.education.map((e) => e.ky).join("\n") ?? "",
           }}
         />
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <Field label="Год начала практики" htmlFor="experienceSince" error={e.experienceSince} hint="Стаж на сайте считается автоматически. Пусто — стаж не показывается">
             <Input id="experienceSince" name="experienceSince" type="number" min={1950} max={2100} defaultValue={doctor ? doctor.experienceSince || "" : 2015} />
           </Field>

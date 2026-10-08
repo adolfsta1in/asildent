@@ -77,7 +77,7 @@ export default async function ServicePage({ params }: PageProps<"/[locale]/uslug
         lead={tr(service.shortDescription, locale)}
       />
 
-      <div className="container-page grid gap-10 pb-16 lg:grid-cols-[1fr_22rem] lg:gap-16">
+      <div className="container-page grid grid-cols-1 gap-10 pb-16 lg:grid-cols-[1fr_22rem] lg:gap-16">
         <div className="min-w-0">
           <section aria-labelledby="about-service">
             <h2 id="about-service" className="text-2xl font-bold">
@@ -97,7 +97,7 @@ export default async function ServicePage({ params }: PageProps<"/[locale]/uslug
             {serviceDoctors.length === 0 ? (
               <p className="mt-4 text-muted-foreground">{t("noDoctors")}</p>
             ) : (
-              <ul className="mt-5 grid gap-3 sm:grid-cols-2">
+              <ul className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2">
                 {serviceDoctors.map((d) => {
                   const dn = tr(d.name, locale);
                   return (
@@ -142,7 +142,7 @@ export default async function ServicePage({ params }: PageProps<"/[locale]/uslug
                 <dt className="flex items-center gap-2 text-sm text-muted-foreground">
                   <Wallet className="size-4 text-primary" aria-hidden /> {t("price")}
                 </dt>
-                <dd className="mt-1 font-heading text-2xl font-bold text-ink">
+                <dd className="mt-1 font-heading text-xl font-bold text-ink sm:text-2xl">
                   {priceLabel(tc, service.priceFrom, service.priceTo, "range")}
                 </dd>
               </div>
@@ -150,7 +150,7 @@ export default async function ServicePage({ params }: PageProps<"/[locale]/uslug
                 <dt className="flex items-center gap-2 text-sm text-muted-foreground">
                   <Clock className="size-4 text-primary" aria-hidden /> {t("duration")}
                 </dt>
-                <dd className="mt-1 font-heading text-2xl font-bold text-ink">
+                <dd className="mt-1 font-heading text-xl font-bold text-ink sm:text-2xl">
                   {tc("minutes", { count: service.durationMin })}
                 </dd>
               </div>
@@ -179,7 +179,7 @@ export default async function ServicePage({ params }: PageProps<"/[locale]/uslug
             <h2 id="related-title" className="mb-6 text-2xl font-bold sm:text-3xl">
               {t("otherServices")}
             </h2>
-            <ul className="grid gap-x-10 md:grid-cols-2">
+            <ul className="grid grid-cols-1 gap-x-10 md:grid-cols-2">
               {related.map((s) => (
                 <li key={s.id} className="border-b border-border/80">
                   <ServiceRow

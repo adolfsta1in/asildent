@@ -15,7 +15,7 @@ export function BeforeAfter({ labels, images = [] }: { labels: Labels; images?: 
   const photo = images[active];
 
   return (
-    <div className="grid gap-8 lg:grid-cols-[1fr_18rem] lg:items-start">
+    <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1fr_18rem] lg:items-start">
       <div className="relative aspect-[4/3] overflow-hidden rounded-3xl border bg-card select-none sm:aspect-[16/10]">
         {photo ? (
           <CasePhoto src={photo.after} alt={`${labels.cases[active]} — ${labels.after}`} />

@@ -24,8 +24,8 @@ export function HeaderShell({ children }: { children: ReactNode }) {
       className={cn(
         "sticky top-0 z-40 border-b transition-[background-color,border-color,box-shadow] duration-300",
         scrolled
-          ? "border-border/70 bg-background/85 shadow-[0_8px_24px_-18px_oklch(0.3_0.03_210/0.35)] backdrop-blur-xl"
-          : "border-transparent bg-background/0",
+          ? "border-border/70 bg-background/95 shadow-[0_8px_24px_-18px_oklch(0.3_0.03_210/0.35)] backdrop-blur-xl"
+          : "border-transparent bg-background",
       )}
     >
       {children}

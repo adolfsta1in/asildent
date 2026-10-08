@@ -49,7 +49,7 @@ export default async function AboutPage() {
         lead={tr(clinic.tagline, locale)}
       />
 
-      <div className="container-page grid gap-10 pb-12 lg:grid-cols-[1.2fr_0.8fr] lg:gap-16">
+      <div className="container-page grid grid-cols-1 gap-10 pb-12 lg:grid-cols-[1.2fr_0.8fr] lg:gap-16">
         <p className="text-xl leading-relaxed text-foreground/90 sm:text-2xl sm:leading-relaxed">{tr(clinic.about, locale)}</p>
         <dl className={`grid ${stats.length === 3 ? "grid-cols-3" : "grid-cols-2"} gap-4 self-start rounded-3xl bg-ink p-6 text-white sm:p-8 lg:grid-cols-1`}>
           {stats.map((s) => (
@@ -66,7 +66,7 @@ export default async function AboutPage() {
         <h2 id="values-title" className="section-title">
           {t("valuesTitle")}
         </h2>
-        <ol className="mt-10 grid gap-4 md:grid-cols-3">
+        <ol className="mt-10 grid grid-cols-1 gap-4 md:grid-cols-3">
           {values.map((v) => (
             <Reveal as="li" key={v} className="rounded-3xl border bg-card p-7">
               <span className="font-heading text-sm font-bold text-primary">0{v}</span>
@@ -78,11 +78,11 @@ export default async function AboutPage() {
       </section>
 
       <section className="container-page py-12" aria-labelledby="equipment-title">
-        <div className="grid gap-8 rounded-[2rem] bg-surface p-7 sm:p-10 lg:grid-cols-[0.8fr_1.2fr]">
+        <div className="grid grid-cols-1 gap-8 rounded-[2rem] bg-surface p-7 sm:p-10 lg:grid-cols-[0.8fr_1.2fr]">
           <h2 id="equipment-title" className="section-title">
             {t("equipmentTitle")}
           </h2>
-          <ul className="grid gap-3 sm:grid-cols-2">
+          <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             {equipment.map((item) => (
               <li key={item} className="flex gap-3 rounded-2xl bg-card p-4">
                 <Check className="mt-0.5 size-5 shrink-0 text-primary" aria-hidden />
@@ -98,10 +98,10 @@ export default async function AboutPage() {
           <h2 id="works-title" className="section-title">
             {t("worksTitle")}
           </h2>
-          <ul className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <ul className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {media.works.map((w) => (
               <Reveal as="li" key={w.src} className="overflow-hidden rounded-3xl border bg-card">
-                <div className="relative aspect-square">
+                <div className="relative aspect-[4/3] sm:aspect-square">
                   <Image
                     src={w.src}
                     alt={tr(w.caption, locale)}

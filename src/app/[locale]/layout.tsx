@@ -92,7 +92,7 @@ export default async function LocaleLayout({ children }: LayoutProps<"/[locale]"
         </a>
         <NextIntlClientProvider messages={clientMessages}>
           <Header clinic={clinic} locale={locale} />
-          <main id="main" className="flex-1 pb-20 lg:pb-0">
+          <main id="main" className="flex-1">
             {children}
           </main>
           <Footer clinic={clinic} locale={locale} />

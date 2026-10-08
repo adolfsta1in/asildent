@@ -63,7 +63,7 @@ export function AppointmentFilters({ doctors }: { doctors: { id: string; name: s
         </Button>
       </div>
 
-      <div className="grid gap-2 rounded-2xl border bg-card p-3 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_auto_auto]">
+      <div className="grid grid-cols-1 gap-2 rounded-2xl border bg-card p-3 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_auto_auto]">
         <form
           className="relative sm:col-span-2 lg:col-span-1"
           onSubmit={(e) => {

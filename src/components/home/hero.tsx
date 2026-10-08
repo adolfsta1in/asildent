@@ -41,7 +41,7 @@ export async function Hero({ clinic, locale }: { clinic: ClinicSettings; locale:
         />
       </div>
 
-      <div className="container-page relative grid items-center gap-12 pt-8 pb-16 sm:pt-12 lg:grid-cols-[1.08fr_0.92fr] lg:gap-16 lg:pt-16 lg:pb-24">
+      <div className="container-page relative grid grid-cols-1 items-center gap-12 pt-8 pb-16 sm:pt-12 lg:grid-cols-[1.08fr_0.92fr] lg:gap-16 lg:pt-16 lg:pb-24">
         <div>
           <p className="eyebrow">
             <span className="h-px w-6 bg-primary" aria-hidden />

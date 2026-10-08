@@ -25,7 +25,7 @@ export function ServicesPicker({ doctorId, groups, selected }: { doctorId: strin
 
   return (
     <Section title="Услуги врача" description="На эти услуги к врачу можно записаться онлайн.">
-      <div className="grid gap-6 md:grid-cols-2">
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         {groups.map((g) => (
           <fieldset key={g.category}>
             <legend className="mb-2 text-xs font-semibold tracking-wider text-muted-foreground uppercase">{g.category}</legend>

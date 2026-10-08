@@ -71,7 +71,7 @@ export default async function DoctorPage({ params }: PageProps<"/[locale]/vrachi
         className="lg:hidden"
       />
 
-      <div className="container-page grid gap-10 pb-16 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16 lg:pt-10">
+      <div className="container-page grid grid-cols-1 gap-10 pb-16 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16 lg:pt-10">
         <div className="lg:sticky lg:top-28 lg:self-start">
           <DoctorAvatar
             name={name}
