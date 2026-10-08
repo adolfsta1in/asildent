@@ -1,9 +1,10 @@
 import { formatNumber } from "./format";
 
-type PriceT = (key: "priceFrom" | "priceRange", values: Record<string, string>) => string;
+type PriceT = (key: "priceFrom" | "priceRange" | "free", values?: Record<string, string>) => string;
 
-/** «от 3 500 сом» / «3 500 – 6 000 сом» с переводом. */
+/** «от 3 500 сом» / «3 500 – 6 000 сом» / «Бесплатно» (цена 0) с переводом. */
 export function priceLabel(t: PriceT, priceFrom: number, priceTo?: number | null, mode: "from" | "range" = "from") {
+  if (priceFrom === 0 && !priceTo) return t("free");
   if (mode === "range" && priceTo && priceTo > priceFrom) {
     return t("priceRange", { from: formatNumber(priceFrom), to: formatNumber(priceTo) });
   }

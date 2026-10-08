@@ -90,6 +90,7 @@ async function main() {
         bio: d.bio,
         education: d.education,
         experienceSince: d.experienceSince,
+        photoUrl: d.photoUrl ?? null,
         sortOrder: i,
         services: { create: d.services.map((slug) => ({ serviceId: serviceIds.get(slug)!.id })) },
         scheduleRules: {

@@ -5,6 +5,7 @@ import { isAdmin } from "@/lib/auth/session";
 import { tr } from "@/lib/localized";
 import { formatDateShort, formatTime } from "@/lib/time";
 import { formatKgPhone } from "@/lib/validators/phone";
+import { sourceLabel } from "@/lib/admin/source";
 
 function csvCell(v: string | number | null | undefined) {
   const s = String(v ?? "");
@@ -29,7 +30,7 @@ export async function GET(request: NextRequest) {
       tr(a.service.name, "ru"),
       tr(a.doctor.name, "ru"),
       isStatus(a.status) ? STATUS_META[a.status].label : a.status,
-      a.source === "admin" ? "Админка" : "Сайт",
+      sourceLabel(a.source),
       a.comment,
       `${formatDateShort(a.createdAt)} ${formatTime(a.createdAt)}`,
     ]

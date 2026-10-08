@@ -3,7 +3,7 @@
  * Активная тема выбирается в админке (Настройки → Тема) и подставляется в <html> при рендере.
  * Чтобы добавить тему — добавьте объект в THEMES и её id в THEME_IDS.
  */
-export const THEME_IDS = ["mint", "blue", "sand"] as const;
+export const THEME_IDS = ["asil", "mint", "blue", "sand"] as const;
 export type ThemeId = (typeof THEME_IDS)[number];
 
 type ThemeTokens = Record<
@@ -39,6 +39,33 @@ export type Theme = {
 };
 
 export const THEMES: Record<ThemeId, Theme> = {
+  asil: {
+    id: "asil",
+    label: "AsilDent",
+    description: "Фирменный голубой AsilDent — как на вывеске и в логотипе клиники",
+    swatches: ["oklch(0.5 0.12 240)", "oklch(0.94 0.03 232)", "oklch(0.24 0.04 245)"],
+    tokens: {
+      background: "oklch(0.988 0.004 232)",
+      foreground: "oklch(0.24 0.03 245)",
+      card: "oklch(1 0 0)",
+      surface: "oklch(0.963 0.013 232)",
+      primary: "oklch(0.5 0.12 240)",
+      "primary-hover": "oklch(0.45 0.115 242)",
+      "primary-foreground": "oklch(0.99 0.004 232)",
+      "primary-soft": "oklch(0.94 0.03 232)",
+      "primary-soft-foreground": "oklch(0.38 0.09 242)",
+      secondary: "oklch(0.952 0.012 232)",
+      "secondary-foreground": "oklch(0.28 0.035 245)",
+      muted: "oklch(0.958 0.008 232)",
+      "muted-foreground": "oklch(0.47 0.025 240)",
+      accent: "oklch(0.93 0.04 205)",
+      "accent-foreground": "oklch(0.36 0.07 220)",
+      border: "oklch(0.905 0.014 232)",
+      input: "oklch(0.875 0.018 232)",
+      ring: "oklch(0.6 0.11 240)",
+      ink: "oklch(0.22 0.04 245)",
+    },
+  },
   mint: {
     id: "mint",
     label: "Мятная",

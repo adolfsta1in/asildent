@@ -1,6 +1,8 @@
 import { CalendarCheck, Phone, ShieldCheck, Sparkles, Star } from "lucide-react";
+import Image from "next/image";
 import { getTranslations } from "next-intl/server";
 import { Button } from "@/components/ui/button";
+import { media } from "@/config/media";
 import type { Locale } from "@/i18n/routing";
 import { Link } from "@/i18n/navigation";
 import { formatNumber, telHref } from "@/lib/format";
@@ -17,9 +19,12 @@ export async function Hero({ clinic, locale }: { clinic: ClinicSettings; locale:
   ]);
   const phone = clinic.phones[0];
 
+  // patientsCount = 0 — число неизвестно, плашку не показываем.
   const stats = [
     { value: `${yearsSince(clinic.foundedYear)}`, label: t("statYears") },
-    { value: `${formatNumber(clinic.patientsCount)}+`, label: t("statPatients") },
+    ...(clinic.patientsCount > 0
+      ? [{ value: `${formatNumber(clinic.patientsCount)}+`, label: t("statPatients") }]
+      : []),
     { value: clinic.rating.toFixed(1).replace(".", ","), label: t("statRating"), star: true },
   ];
 
@@ -62,7 +67,9 @@ export async function Hero({ clinic, locale }: { clinic: ClinicSettings; locale:
             )}
           </div>
 
-          <dl className="mt-12 grid max-w-lg grid-cols-3 gap-4 border-t pt-8">
+          <dl
+            className={`mt-12 grid max-w-lg ${stats.length === 3 ? "grid-cols-3" : "grid-cols-2"} gap-4 border-t pt-8`}
+          >
             {stats.map((s) => (
               <div key={s.label}>
                 <dt className="sr-only">{s.label}</dt>
@@ -102,32 +109,43 @@ function HeroVisual({
   return (
     <div className="relative mx-auto w-full max-w-md lg:max-w-none">
       <div className="relative aspect-[4/4.4] overflow-hidden rounded-[2.25rem] bg-primary-soft sm:aspect-[4/4]">
-        <svg
-          viewBox="0 0 400 420"
-          className="absolute inset-0 size-full"
-          aria-hidden
-          preserveAspectRatio="xMidYMid slice"
-        >
-          <circle cx="330" cy="70" r="120" fill="var(--card)" opacity="0.45" />
-          <circle cx="60" cy="380" r="110" fill="var(--surface)" opacity="0.7" />
-          <g
-            transform="translate(110 70) scale(7.5)"
-            fill="none"
-            stroke="var(--primary)"
-            strokeWidth="0.42"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            opacity="0.9"
+        {media.hero ? (
+          <Image
+            src={media.hero.src}
+            alt={tr(media.hero.alt, locale)}
+            fill
+            priority
+            sizes="(min-width: 1024px) 40vw, (min-width: 640px) 28rem, 100vw"
+            className="object-cover"
+          />
+        ) : (
+          <svg
+            viewBox="0 0 400 420"
+            className="absolute inset-0 size-full"
+            aria-hidden
+            preserveAspectRatio="xMidYMid slice"
           >
-            <path d="M7.5 3.2c1.6-.5 3 .1 4.5.8 1.5-.7 2.9-1.3 4.5-.8 2.6.8 3.8 3.6 3.1 6.7-.4 1.7-1.2 2.9-1.6 4.6-.5 2.2-.6 4.5-1.6 6.1-.6 1-1.9.9-2.3-.2-.5-1.4-.6-3.6-2.1-3.6s-1.6 2.2-2.1 3.6c-.4 1.1-1.7 1.2-2.3.2-1-1.6-1.1-3.9-1.6-6.1-.4-1.7-1.2-2.9-1.6-4.6-.7-3.1.5-5.9 3.1-6.7Z" />
-            <path d="M9 7.2c1 .1 2 .5 3 1" />
-          </g>
-          <g stroke="var(--primary)" strokeOpacity="0.18" strokeWidth="1">
-            {Array.from({ length: 7 }, (_, i) => (
-              <line key={i} x1="0" x2="400" y1={60 + i * 50} y2={60 + i * 50} strokeDasharray="2 6" />
-            ))}
-          </g>
-        </svg>
+            <circle cx="330" cy="70" r="120" fill="var(--card)" opacity="0.45" />
+            <circle cx="60" cy="380" r="110" fill="var(--surface)" opacity="0.7" />
+            <g
+              transform="translate(110 70) scale(7.5)"
+              fill="none"
+              stroke="var(--primary)"
+              strokeWidth="0.42"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              opacity="0.9"
+            >
+              <path d="M7.5 3.2c1.6-.5 3 .1 4.5.8 1.5-.7 2.9-1.3 4.5-.8 2.6.8 3.8 3.6 3.1 6.7-.4 1.7-1.2 2.9-1.6 4.6-.5 2.2-.6 4.5-1.6 6.1-.6 1-1.9.9-2.3-.2-.5-1.4-.6-3.6-2.1-3.6s-1.6 2.2-2.1 3.6c-.4 1.1-1.7 1.2-2.3.2-1-1.6-1.1-3.9-1.6-6.1-.4-1.7-1.2-2.9-1.6-4.6-.7-3.1.5-5.9 3.1-6.7Z" />
+              <path d="M9 7.2c1 .1 2 .5 3 1" />
+            </g>
+            <g stroke="var(--primary)" strokeOpacity="0.18" strokeWidth="1">
+              {Array.from({ length: 7 }, (_, i) => (
+                <line key={i} x1="0" x2="400" y1={60 + i * 50} y2={60 + i * 50} strokeDasharray="2 6" />
+              ))}
+            </g>
+          </svg>
+        )}
 
         <div className="absolute top-5 left-5 flex items-center gap-2 rounded-full bg-card/90 px-3.5 py-2 text-xs font-semibold text-ink shadow-soft backdrop-blur sm:top-7 sm:left-7">
           <ShieldCheck className="size-4 text-primary" aria-hidden />

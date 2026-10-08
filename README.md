@@ -1,10 +1,8 @@
-# Шаблон сайта стоматологической клиники
+# AsilDent — сайт стоматологической клиники
 
-Готовый сайт стоматологии с онлайн-записью и админкой. Сделан как продукт: один раз собран, дальше
-перенастраивается под конкретную клинику за 15–30 минут — название, логотип, цвета, врачи, услуги, цены,
-график и контакты.
-
-Демо-клиника «Арча Дент» (Бишкек) вымышленная: врачи, отзывы и цены — примерные.
+Сайт клиники AsilDent (Бишкек, пр. Аалы Токомбаева, 7/5) с онлайн-записью и админкой. Собран из шаблона
+[dental_template](https://github.com/adolfsta1in/dental_template). Откуда взяты данные клиники и что нужно
+уточнить — [`docs/clinic-data.md`](docs/clinic-data.md).
 
 > **Новая клиника через Claude Code?** Откройте [`PROMPT.md`](PROMPT.md) — там готовый промт: отправляете его
 > в новый чат вместе со ссылкой на этот репозиторий и Instagram клиники, и Claude сам соберёт данные и
@@ -38,7 +36,7 @@
 - Уведомление в Telegram о каждой новой записи (если заданы токен и chat_id).
 
 **Стек:** Next.js 16 (App Router, Cache Components) · TypeScript strict · Tailwind CSS v4 + shadcn/ui ·
-Prisma 7 (SQLite локально, PostgreSQL в продакшене) · next-intl · Zod · react-hook-form · framer-motion · Vitest.
+Prisma 7 (PostgreSQL в Supabase) · next-intl · Zod · react-hook-form · framer-motion · Vitest.
 
 ## Запуск локально
 
@@ -46,9 +44,7 @@ Prisma 7 (SQLite локально, PostgreSQL в продакшене) · next-i
 
 ```bash
 npm i
-cp .env.example .env          # поменяйте ADMIN_PASSWORD и SESSION_SECRET
-npx prisma migrate dev        # создаст prisma/dev.db
-npm run db:seed               # демо-данные (перезаписывает БД!)
+cp .env.example .env          # DATABASE_URL из Supabase, ADMIN_PASSWORD, SESSION_SECRET
 npm run dev                   # http://localhost:3000, админка — /admin
 ```
 
@@ -81,25 +77,27 @@ npm run dev                   # http://localhost:3000, админка — /admin
 
 После запуска почти всё меняется без кода — в админке (`/admin/settings`, врачи, услуги, отзывы).
 
-## Деплой на Vercel + PostgreSQL (Neon / Supabase)
+## База и деплой (Supabase + Vercel)
 
-1. Создайте базу PostgreSQL в [Neon](https://neon.tech) или [Supabase](https://supabase.com), скопируйте строку
-   подключения (`postgresql://…?sslmode=require`).
-2. В `prisma/schema.prisma` замените `provider = "sqlite"` на `provider = "postgresql"`.
-3. Миграции в `prisma/migrations` созданы для SQLite — пересоздайте их под Postgres:
-   ```bash
-   rm -rf prisma/migrations
-   DATABASE_URL="postgresql://…" npx prisma migrate dev --name init
-   DATABASE_URL="postgresql://…" npm run db:seed
-   ```
-   Код сам выбирает драйвер по `DATABASE_URL` (`src/lib/db.ts`): `file:` — SQLite, `postgres…` — PostgreSQL.
-4. Импортируйте репозиторий в [Vercel](https://vercel.com/new). Переменные окружения: `DATABASE_URL`,
-   `SITE_URL` (ваш домен), `ADMIN_PASSWORD`, `SESSION_SECRET`, при желании `TELEGRAM_BOT_TOKEN`,
-   `TELEGRAM_CHAT_ID`.
-5. Загрузка фото и логотипа на Vercel: файловая система там только для чтения, поэтому подключите
-   **Vercel Blob** (Storage → Blob → Connect) — переменная `BLOB_READ_WRITE_TOKEN` появится сама.
-6. При следующих изменениях схемы: `npx prisma migrate dev` локально, затем `npm run db:deploy` с продовым
-   `DATABASE_URL`.
+База — PostgreSQL в Supabase (проект **AsilDent**, регион Токио). Схема и данные клиники уже залиты,
+миграция `prisma/migrations/0_init` отмечена как применённая; подробности и демо-записи — `supabase/README.md`.
+**Не запускайте `npm run db:seed` на этой базе** — он удаляет все записи.
+
+Сайт деплоится на Vercel из GitHub (`adolfsta1in/asildent`, ветка `main`), функции — в регионе `hnd1`
+(рядом с базой, `vercel.json`). Переменные окружения в Vercel → Settings → Environment Variables:
+
+| Переменная | Значение |
+| --- | --- |
+| `DATABASE_URL` | Supabase → Project Settings → Database → Connection string → **Session pooler** (порт 5432) |
+| `SITE_URL` | адрес сайта без слэша, например `https://asildent.vercel.app` |
+| `ADMIN_PASSWORD` | пароль админки |
+| `SESSION_SECRET` | случайная строка от 32 символов (`openssl rand -hex 32`) |
+| `BLOB_READ_WRITE_TOKEN` | появится сам после Storage → Blob → Connect (нужен для загрузки фото в админке) |
+| `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID` | по желанию, уведомления о записях |
+
+`DATABASE_URL` нужен уже на этапе сборки: страницы пререндерятся из базы. Локально в `.env` — та же
+строка Supabase. При изменениях схемы: `npx prisma migrate dev` на отдельной базе, затем
+`npm run db:deploy` с боевым `DATABASE_URL`.
 
 ## Уведомления в Telegram
 

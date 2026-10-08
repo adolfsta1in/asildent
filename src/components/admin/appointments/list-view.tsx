@@ -5,6 +5,7 @@ import { tr } from "@/lib/localized";
 import { formatDateLong, formatTime, toDateKey } from "@/lib/time";
 import { formatKgPhone } from "@/lib/validators/phone";
 import { StatusSelect } from "./status-select";
+import { sourceLabel } from "@/lib/admin/source";
 
 /** Список записей, сгруппированный по дням. На мобильном — карточки, на десктопе — строки таблицы. */
 export function ListView({ appointments }: { appointments: AdminAppointment[] }) {
@@ -67,7 +68,7 @@ export function ListView({ appointments }: { appointments: AdminAppointment[] })
                     <td className="col-start-2 md:px-4 md:py-3 md:align-top">
                       <StatusSelect id={a.id} status={a.status} />
                       <span className="mt-1 block text-[0.7rem] text-muted-foreground">
-                        {a.source === "admin" ? "Админка" : "Сайт"} · {a.publicCode}
+                        {sourceLabel(a.source)} · {a.publicCode}
                       </span>
                     </td>
                   </tr>

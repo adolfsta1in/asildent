@@ -31,6 +31,8 @@ export async function loadAvailability(
   from: DateKey,
   to: DateKey,
   client: Tx = db,
+  /** Не учитывать эту запись как занятость (перенос записи на соседнее время). */
+  excludeAppointmentId?: string,
 ): Promise<DoctorAvailability[]> {
   if (doctorIds.length === 0) return [];
   // Запас в сутки с каждой стороны — чтобы не потерять записи на границе дат.
@@ -44,6 +46,7 @@ export async function loadAvailability(
       where: {
         doctorId: { in: doctorIds },
         status: { in: [...ACTIVE_STATUSES] },
+        ...(excludeAppointmentId ? { id: { not: excludeAppointmentId } } : {}),
         startAt: { lt: rangeEnd },
         endAt: { gt: rangeStart },
       },
@@ -82,6 +85,8 @@ export type FindSlotsInput = {
   now?: Date;
   /** Для админки: не учитывать минимальный отступ от текущего момента. */
   ignoreLead?: boolean;
+  /** Для переноса: время самой переносимой записи считать свободным. */
+  excludeAppointmentId?: string;
 };
 
 /** Свободные слоты по услуге и врачу (или по всем врачам услуги). */
@@ -95,7 +100,7 @@ export async function findSlots(input: FindSlotsInput): Promise<MergedSlot[]> {
 
   const candidates = await doctorsForService(input.serviceId);
   const doctorIds = input.doctorId ? candidates.filter((id) => id === input.doctorId) : candidates;
-  const availability = await loadAvailability(doctorIds, from, to);
+  const availability = await loadAvailability(doctorIds, from, to, db, input.excludeAppointmentId);
 
   return computeMergedSlots(availability, {
     durationMin: input.durationMin,

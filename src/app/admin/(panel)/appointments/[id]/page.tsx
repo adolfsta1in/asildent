@@ -4,14 +4,16 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { WhatsAppIcon } from "@/components/icons";
 import { DeleteAppointmentButton } from "@/components/admin/appointments/delete-button";
+import { RescheduleForm } from "@/components/admin/appointments/reschedule-form";
 import { StatusSelect } from "@/components/admin/appointments/status-select";
 import { Button } from "@/components/ui/button";
 import { appointmentInclude } from "@/lib/admin/appointments";
 import { db } from "@/lib/db";
 import { formatNumber, whatsappHref } from "@/lib/format";
 import { tr } from "@/lib/localized";
-import { formatDateLong, formatDateShort, formatTime } from "@/lib/time";
+import { formatDateLong, formatDateShort, formatTime, toDateKey } from "@/lib/time";
 import { formatKgPhone } from "@/lib/validators/phone";
+import { sourceLabel } from "@/lib/admin/source";
 
 export const metadata: Metadata = { title: "Запись" };
 
@@ -19,6 +21,14 @@ export default async function AppointmentPage({ params }: PageProps<"/admin/appo
   const { id } = await params;
   const a = await db.appointment.findUnique({ where: { id }, include: appointmentInclude });
   if (!a) notFound();
+  const canReschedule = a.status === "NEW" || a.status === "CONFIRMED";
+  const serviceDoctors = canReschedule
+    ? await db.doctor.findMany({
+        where: { isActive: true, services: { some: { serviceId: a.serviceId } } },
+        orderBy: { sortOrder: "asc" },
+        select: { id: true, name: true },
+      })
+    : [];
 
   const rows: [string, React.ReactNode][] = [
     ["Дата", <span key="d" className="first-letter:uppercase">{formatDateLong(a.startAt, "ru")}</span>],
@@ -28,7 +38,7 @@ export default async function AppointmentPage({ params }: PageProps<"/admin/appo
     ["Пациент", a.patientName],
     ["Телефон", <a key="p" href={`tel:${a.patientPhone}`} className="text-primary hover:underline">{formatKgPhone(a.patientPhone)}</a>],
     ["Комментарий", a.comment || "—"],
-    ["Источник", a.source === "admin" ? "Админка" : `Сайт (${a.locale === "ky" ? "кыргызская" : "русская"} версия)`],
+    ["Источник", a.source === "web" ? `Сайт (${a.locale === "ky" ? "кыргызская" : "русская"} версия)` : sourceLabel(a.source)],
     ["Номер записи", a.publicCode],
     ["Создана", `${formatDateShort(a.createdAt)} ${formatTime(a.createdAt)}`],
     ["Согласие на обработку ПДн", a.consentAt ? `${formatDateShort(a.consentAt)} ${formatTime(a.consentAt)}` : "—"],
@@ -68,6 +78,17 @@ export default async function AppointmentPage({ params }: PageProps<"/admin/appo
               <WhatsAppIcon className="size-4 text-[#1DA851]" /> WhatsApp
             </a>
           </Button>
+          {canReschedule && (
+            <RescheduleForm
+              appointmentId={a.id}
+              serviceId={a.serviceId}
+              doctors={serviceDoctors.map((d) => ({ id: d.id, name: tr(d.name, "ru") }))}
+              currentDoctorId={a.doctorId}
+              currentDate={toDateKey(a.startAt)}
+              currentStart={a.startAt.toISOString()}
+              today={toDateKey(new Date())}
+            />
+          )}
           <div className="ml-auto">
             <DeleteAppointmentButton id={a.id} />
           </div>

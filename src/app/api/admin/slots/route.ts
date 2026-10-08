@@ -18,6 +18,7 @@ export async function GET(request: NextRequest) {
     from: date,
     to: date,
     ignoreLead: true,
+    excludeAppointmentId: params.get("exclude") ?? undefined,
   });
   return NextResponse.json(
     { slots: slots.map((s) => ({ start: s.start.toISOString(), end: s.end.toISOString(), doctorIds: s.doctorIds })) },

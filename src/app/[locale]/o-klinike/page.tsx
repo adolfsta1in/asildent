@@ -1,10 +1,12 @@
 import { Check } from "lucide-react";
 import type { Metadata } from "next";
+import Image from "next/image";
 import { getTranslations } from "next-intl/server";
 import { Benefits } from "@/components/home/benefits";
 import { CtaBand } from "@/components/site/cta-band";
 import { PageHeader } from "@/components/site/page-header";
 import { Reveal } from "@/components/site/reveal";
+import { media } from "@/config/media";
 import { formatNumber } from "@/lib/format";
 import { yearsSince } from "@/lib/i18n-format";
 import { getLocale } from "@/lib/locale";
@@ -34,7 +36,7 @@ export default async function AboutPage() {
   const equipment = t.raw("equipment") as string[];
   const stats = [
     { value: `${yearsSince(clinic.foundedYear)}`, label: th("statYears") },
-    { value: `${formatNumber(clinic.patientsCount)}+`, label: th("statPatients") },
+    ...(clinic.patientsCount > 0 ? [{ value: `${formatNumber(clinic.patientsCount)}+`, label: th("statPatients") }] : []),
     { value: clinic.rating.toFixed(1).replace(".", ","), label: th("statRating") },
   ];
 
@@ -49,7 +51,7 @@ export default async function AboutPage() {
 
       <div className="container-page grid gap-10 pb-12 lg:grid-cols-[1.2fr_0.8fr] lg:gap-16">
         <p className="text-xl leading-relaxed text-foreground/90 sm:text-2xl sm:leading-relaxed">{tr(clinic.about, locale)}</p>
-        <dl className="grid grid-cols-3 gap-4 self-start rounded-3xl bg-ink p-6 text-white sm:p-8 lg:grid-cols-1">
+        <dl className={`grid ${stats.length === 3 ? "grid-cols-3" : "grid-cols-2"} gap-4 self-start rounded-3xl bg-ink p-6 text-white sm:p-8 lg:grid-cols-1`}>
           {stats.map((s) => (
             <div key={s.label} className="lg:border-b lg:border-white/10 lg:pb-5 lg:last:border-0 lg:last:pb-0">
               <dt className="sr-only">{s.label}</dt>
@@ -90,6 +92,30 @@ export default async function AboutPage() {
           </ul>
         </div>
       </section>
+
+      {media.works.length > 0 && (
+        <section className="container-page py-12" aria-labelledby="works-title">
+          <h2 id="works-title" className="section-title">
+            {t("worksTitle")}
+          </h2>
+          <ul className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {media.works.map((w) => (
+              <Reveal as="li" key={w.src} className="overflow-hidden rounded-3xl border bg-card">
+                <div className="relative aspect-square">
+                  <Image
+                    src={w.src}
+                    alt={tr(w.caption, locale)}
+                    fill
+                    sizes="(min-width: 1024px) 30vw, (min-width: 640px) 45vw, 100vw"
+                    className="object-cover"
+                  />
+                </div>
+                <p className="p-5 text-sm leading-snug text-muted-foreground">{tr(w.caption, locale)}</p>
+              </Reveal>
+            ))}
+          </ul>
+        </section>
+      )}
 
       <Benefits locale={locale} />
       <CtaBand clinic={clinic} locale={locale} />

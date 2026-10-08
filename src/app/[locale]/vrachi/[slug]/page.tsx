@@ -53,7 +53,10 @@ export default async function DoctorPage({ params }: PageProps<"/[locale]/vrachi
 
   const name = tr(doctor.name, locale);
   const doctorServices = services.filter((s) => doctor.serviceIds.includes(s.id));
-  const experience = tc("experience", { years: tc("years", { count: yearsSince(doctor.experienceSince) }) });
+  // experienceSince = 0 — стаж неизвестен, не показываем.
+  const experience = doctor.experienceSince
+    ? tc("experience", { years: tc("years", { count: yearsSince(doctor.experienceSince) }) })
+    : "";
 
   return (
     <>
@@ -91,9 +94,11 @@ export default async function DoctorPage({ params }: PageProps<"/[locale]/vrachi
             <h1 className="mt-3 text-5xl leading-[1.05] font-bold tracking-[-0.03em]">{name}</h1>
             <p className="mt-3 text-xl text-muted-foreground">{tr(doctor.specialty, locale)}</p>
           </div>
-          <p className="inline-flex rounded-full bg-primary-soft px-3 py-1.5 text-sm font-semibold text-primary-soft-foreground lg:mt-6">
-            {experience}
-          </p>
+          {experience && (
+            <p className="inline-flex rounded-full bg-primary-soft px-3 py-1.5 text-sm font-semibold text-primary-soft-foreground lg:mt-6">
+              {experience}
+            </p>
+          )}
 
           <section aria-labelledby="doctor-about" className="mt-8">
             <h2 id="doctor-about" className="sr-only">

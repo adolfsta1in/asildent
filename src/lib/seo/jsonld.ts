@@ -29,7 +29,7 @@ export function clinicJsonLd(clinic: ClinicSettings, locale: string) {
     description: tr(clinic.description, locale),
     url: localizedUrl(locale, "/"),
     telephone: clinic.phones[0],
-    email: clinic.email,
+    email: clinic.email || undefined,
     image: clinic.logoUrl ? new URL(clinic.logoUrl, siteUrl()).toString() : localizedUrl(locale, "/opengraph-image"),
     logo: clinic.logoUrl ? new URL(clinic.logoUrl, siteUrl()).toString() : undefined,
     priceRange: "$$",

@@ -1,5 +1,5 @@
 // Схема БД демо-шаблона стоматологии.
-// Локально — SQLite. Для деплоя смените provider на "postgresql" (см. README).
+// PostgreSQL (Supabase): и локально, и на Vercel. Строка подключения — DATABASE_URL в .env / Vercel.
 // Локализованные тексты хранятся в Json вида { "ru": "...", "ky": "..." }.
 
 generator client {
@@ -8,7 +8,7 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
 }
 
 /// Настройки клиники. Всегда одна строка с id = 1.

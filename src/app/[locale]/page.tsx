@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { BeforeAfter } from "@/components/home/before-after";
+import { media } from "@/config/media";
 import { Benefits } from "@/components/home/benefits";
 import { ContactsSection } from "@/components/home/contacts-section";
 import { DoctorsSection } from "@/components/home/doctors-section";
@@ -42,6 +43,7 @@ export default async function HomePage() {
               slider: tba("sliderLabel"),
               cases: [tba("cases.1"), tba("cases.2"), tba("cases.3")],
             }}
+            images={media.beforeAfter}
           />
         </div>
       </section>

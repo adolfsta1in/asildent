@@ -28,8 +28,9 @@ export async function saveDoctor(_: FormState, fd: FormData): Promise<FormState>
   if (name.ru.length < 2) errors.name = "Укажите имя";
   const slug = str(fd, "slug") || slugify(name.ru);
   if (!SLUG_RE.test(slug)) errors.slug = "Только латиница, цифры и дефисы";
-  const year = int(fd, "experienceSince", new Date().getFullYear());
-  if (year < 1950 || year > new Date().getFullYear()) errors.experienceSince = "Некорректный год";
+  // Пусто (0) — стаж неизвестен, на сайте не показывается.
+  const year = int(fd, "experienceSince", 0);
+  if (year !== 0 && (year < 1950 || year > new Date().getFullYear())) errors.experienceSince = "Некорректный год";
   const taken = await db.doctor.findFirst({ where: { slug, NOT: id ? { id } : undefined } });
   if (taken) errors.slug = "Такой адрес уже занят";
   if (Object.keys(errors).length) return { errors, message: "Проверьте поля формы" };

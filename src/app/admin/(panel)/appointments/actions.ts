@@ -5,6 +5,7 @@ import { Prisma } from "@/generated/prisma/client";
 import { isStatus, OCCUPYING } from "@/lib/appointment-status";
 import { requireAdmin } from "@/lib/auth/session";
 import { createAppointment, type BookingResult } from "@/lib/booking/create";
+import { rescheduleAppointment } from "@/lib/booking/reschedule";
 import { TAGS } from "@/lib/cache-tags";
 import { db } from "@/lib/db";
 import { cellStarts } from "@/lib/slots/cells";
@@ -75,4 +76,22 @@ export async function adminCreateAppointment(input: {
   );
   if (result.ok) revalidatePath("/admin", "layout");
   return result;
+}
+
+const RESCHEDULE_ERRORS: Record<string, string> = {
+  NOT_FOUND: "Запись не найдена",
+  NOT_ACTIVE: "Переносить можно только новые и подтверждённые записи",
+  DOCTOR: "Этот врач не оказывает эту услугу",
+  SLOT_TAKEN: "Это время уже занято — выберите другое",
+  UNKNOWN: "Не удалось перенести запись",
+};
+
+/** Перенос записи на другое время или к другому врачу. */
+export async function rescheduleAppointmentAction(id: string, input: { start: string; doctorId: string }): Promise<ActionResult> {
+  await requireAdmin();
+  const result = await rescheduleAppointment(id, input);
+  if (!result.ok) return { ok: false, error: RESCHEDULE_ERRORS[result.error] };
+  updateTag(TAGS.schedule);
+  revalidatePath("/admin", "layout");
+  return { ok: true };
 }
