@@ -1,4 +1,4 @@
-import { CalendarCheck, Phone, ShieldCheck, Sparkles, Star } from "lucide-react";
+import { CalendarCheck, Phone, ShieldCheck, Star } from "lucide-react";
 import Image from "next/image";
 import { getTranslations } from "next-intl/server";
 import { Button } from "@/components/ui/button";
@@ -87,7 +87,6 @@ export async function Hero({ clinic, locale }: { clinic: ClinicSettings; locale:
           locale={locale}
           labels={{
             sterile: t("badgeSterile"),
-            painless: t("badgePainless"),
             nextSlot: t("nextSlot"),
             nextSlotCta: t("nextSlotCta"),
             today: tc2("today"),
@@ -104,7 +103,7 @@ function HeroVisual({
   labels,
 }: {
   locale: Locale;
-  labels: { sterile: string; painless: string; nextSlot: string; nextSlotCta: string; today: string; tomorrow: string };
+  labels: { sterile: string; nextSlot: string; nextSlotCta: string; today: string; tomorrow: string };
 }) {
   return (
     <div className="relative mx-auto w-full max-w-md lg:max-w-none">
@@ -150,10 +149,6 @@ function HeroVisual({
         <div className="absolute top-5 left-5 flex items-center gap-2 rounded-full bg-card/90 px-3.5 py-2 text-xs font-semibold text-ink shadow-soft backdrop-blur sm:top-7 sm:left-7">
           <ShieldCheck className="size-4 text-primary" aria-hidden />
           {labels.sterile}
-        </div>
-        <div className="absolute top-16 right-5 flex items-center gap-2 rounded-full bg-card/90 px-3.5 py-2 text-xs font-semibold text-ink shadow-soft backdrop-blur sm:top-20 sm:right-7">
-          <Sparkles className="size-4 text-accent-foreground" aria-hidden />
-          {labels.painless}
         </div>
       </div>
 
