@@ -1,36 +1,141 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Шаблон сайта стоматологической клиники
 
-## Getting Started
+Готовый сайт стоматологии с онлайн-записью и админкой. Сделан как продукт: один раз собран, дальше
+перенастраивается под конкретную клинику за 15–30 минут — название, логотип, цвета, врачи, услуги, цены,
+график и контакты.
 
-First, run the development server:
+Демо-клиника «Арча Дент» (Бишкек) вымышленная: врачи, отзывы и цены — примерные.
+
+> **Новая клиника через Claude Code?** Откройте [`PROMPT.md`](PROMPT.md) — там готовый промт: отправляете его
+> в новый чат вместе со ссылкой на этот репозиторий и Instagram клиники, и Claude сам соберёт данные и
+> перенастроит сайт. Подробная инструкция для ручной перенастройки — [`docs/CUSTOMIZE.md`](docs/CUSTOMIZE.md).
+
+## Что внутри
+
+**Сайт** (русский по умолчанию + кыргызский, переключатель в шапке):
+- Главная: hero с живым «ближайшим свободным временем», преимущества, популярные услуги с ценами, врачи,
+  «как записаться» в 3 шага, до/после, отзывы, FAQ, контакты с картой 2GIS и часами работы.
+- Услуги (поиск, категории) и страница каждой услуги; врачи и страница врача с ближайшими свободными окнами.
+- Онлайн-запись `/booking`: услуга → врач (или «любой свободный») → дата → время → контакты → подтверждение
+  с кнопкой «Добавить в календарь» (.ics) и WhatsApp.
+- О клинике, Контакты, Политика конфиденциальности (шаблон), 404.
+- На мобильном — закреплённая панель «Позвонить / WhatsApp / Записаться».
+
+**Админка** `/admin` (вход по паролю из `.env`, адаптивная — удобно с телефона):
+- Сводка: записи сегодня, новые заявки, ближайшие визиты.
+- Записи: список / день (колонки по врачам) / неделя, фильтры, смена статуса, ручная запись, экспорт CSV.
+- Врачи: профиль, фото, услуги, недельный график с перерывами, отпуска и особые дни.
+- Услуги и категории, цены, длительность, сортировка. Отзывы и FAQ.
+- Настройки: все данные клиники, логотип, 3 цветовые темы с живым превью, параметры записи, проверка Telegram.
+
+**Надёжность записи**
+- Свободные слоты = график врача − перерыв − исключения − существующие записи − «сейчас + минимальный отступ»,
+  в пределах горизонта записи. Всё время — по Бишкеку (`Asia/Bishkek`).
+- Двойная запись невозможна: проверка в транзакции + уникальное ограничение в БД на ячейки времени врача
+  (таблица `BookedSlot`). Если слот заняли, пока клиент заполнял форму, — понятное сообщение и ближайшие окна.
+- Антиспам: honeypot-поле, минимальное время заполнения, rate limit по IP и телефону.
+- Статусы: новая → подтверждена → завершена / отменена / не пришёл. Отмена освобождает время.
+- Уведомление в Telegram о каждой новой записи (если заданы токен и chat_id).
+
+**Стек:** Next.js 16 (App Router, Cache Components) · TypeScript strict · Tailwind CSS v4 + shadcn/ui ·
+Prisma 7 (SQLite локально, PostgreSQL в продакшене) · next-intl · Zod · react-hook-form · framer-motion · Vitest.
+
+## Запуск локально
+
+Нужен Node.js 20+.
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm i
+cp .env.example .env          # поменяйте ADMIN_PASSWORD и SESSION_SECRET
+npx prisma migrate dev        # создаст prisma/dev.db
+npm run db:seed               # демо-данные (перезаписывает БД!)
+npm run dev                   # http://localhost:3000, админка — /admin
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Полезные команды:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+| Команда | Что делает |
+| --- | --- |
+| `npm run dev` | dev-сервер |
+| `npm run build && npm start` | production-сборка и запуск |
+| `npm run lint` / `npm run typecheck` | проверки кода |
+| `npm test` | тесты: расчёт слотов, часовой пояс, защита от двойной записи, телефон, .ics, контраст тем |
+| `npm run db:seed` | заново залить демо-данные (удаляет текущие!) |
+| `npm run db:reset` | пересоздать БД с нуля + seed |
+| `npm run db:studio` | просмотр БД в браузере |
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Как перенастроить под новую клинику — коротко
 
-## Learn More
+Подробно, с объяснением каждого файла, — в [`docs/CUSTOMIZE.md`](docs/CUSTOMIZE.md). Чеклист:
 
-To learn more about Next.js, take a look at the following resources:
+1. **Данные клиники** — `src/config/clinic.ts`: название, слоган, телефоны, WhatsApp, Telegram, Instagram,
+   адрес, координаты, ссылка 2GIS, часы работы, тема, параметры записи, юрлицо.
+2. **Врачи, услуги, цены, FAQ, отзывы** — `prisma/seed-data.ts`.
+3. **Логотип** — положить в `public/brand/logo.svg` (или .png) и указать `logoUrl: "/brand/logo.svg"`.
+4. **Цвета** — выбрать одну из тем (`mint`, `blue`, `sand`) или добавить свою в `src/config/themes.ts`
+   (после этого `npm test` проверит контраст).
+5. **Убрать демо-пометки** — `footer.disclaimer` и `footer.license` в `messages/ru.json` и `messages/ky.json`,
+   демо-отзывы заменить настоящими (или удалить).
+6. **Политика конфиденциальности** — `src/content/privacy.ts` (проверить с юристом).
+7. `SEED_DEMO=false npm run db:seed && npm run build` — без демо-записей пациентов, и проверить сайт.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+После запуска почти всё меняется без кода — в админке (`/admin/settings`, врачи, услуги, отзывы).
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Деплой на Vercel + PostgreSQL (Neon / Supabase)
 
-## Deploy on Vercel
+1. Создайте базу PostgreSQL в [Neon](https://neon.tech) или [Supabase](https://supabase.com), скопируйте строку
+   подключения (`postgresql://…?sslmode=require`).
+2. В `prisma/schema.prisma` замените `provider = "sqlite"` на `provider = "postgresql"`.
+3. Миграции в `prisma/migrations` созданы для SQLite — пересоздайте их под Postgres:
+   ```bash
+   rm -rf prisma/migrations
+   DATABASE_URL="postgresql://…" npx prisma migrate dev --name init
+   DATABASE_URL="postgresql://…" npm run db:seed
+   ```
+   Код сам выбирает драйвер по `DATABASE_URL` (`src/lib/db.ts`): `file:` — SQLite, `postgres…` — PostgreSQL.
+4. Импортируйте репозиторий в [Vercel](https://vercel.com/new). Переменные окружения: `DATABASE_URL`,
+   `SITE_URL` (ваш домен), `ADMIN_PASSWORD`, `SESSION_SECRET`, при желании `TELEGRAM_BOT_TOKEN`,
+   `TELEGRAM_CHAT_ID`.
+5. Загрузка фото и логотипа на Vercel: файловая система там только для чтения, поэтому подключите
+   **Vercel Blob** (Storage → Blob → Connect) — переменная `BLOB_READ_WRITE_TOKEN` появится сама.
+6. При следующих изменениях схемы: `npx prisma migrate dev` локально, затем `npm run db:deploy` с продовым
+   `DATABASE_URL`.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Уведомления в Telegram
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. Напишите [@BotFather](https://t.me/BotFather) → `/newbot` → получите токен вида `123456:ABC…`.
+2. Создайте группу для администраторов клиники и добавьте туда бота (или просто напишите боту в личку).
+3. Отправьте в группу любое сообщение и откройте
+   `https://api.telegram.org/bot<ТОКЕН>/getUpdates` — в ответе найдите `"chat":{"id":…}`
+   (у групп id отрицательный, например `-1001234567890`).
+4. Пропишите `TELEGRAM_BOT_TOKEN` и `TELEGRAM_CHAT_ID` в `.env` / Vercel и перезапустите.
+5. Админка → Настройки → «Проверить отправку».
+
+Без этих переменных уведомления просто выключены — сайт работает как обычно.
+
+## Важно
+
+- **Кыргызский перевод требует проверки носителем языка** — `messages/ky.json`, поля `ky` в
+  `src/config/clinic.ts`, `prisma/seed-data.ts`, `src/content/privacy.ts`.
+- **Шрифты.** Заголовки — Geologica, текст — Onest: оба содержат кыргызские ң, ө, ү. Если меняете шрифт —
+  проверьте эти буквы (например, у Manrope, Unbounded, Jost буквы «ң» нет).
+- **Карта 2GIS.** Виджет карты 2GIS работает только с ID организации. Возьмите ссылку из 2GIS
+  («Поделиться» → «Карта для сайта», адрес из `src` iframe) и вставьте в Настройки → «Ссылка для виджета
+  карты». Без неё показывается стилизованная схема с кнопкой «Построить маршрут».
+- Демо-фото врачей — нейтральные заглушки. Фото реальных людей — только с их согласия.
+
+## Структура
+
+```
+src/config/clinic.ts       начальные данные клиники (seed пишет их в БД, дальше — админка)
+src/config/themes.ts       цветовые темы (CSS-переменные OKLCH)
+prisma/schema.prisma       схема БД
+prisma/seed-data.ts        демо-врачи, услуги, цены, FAQ, отзывы
+messages/ru.json, ky.json  тексты интерфейса
+src/content/privacy.ts     шаблон политики конфиденциальности
+src/lib/slots/engine.ts    расчёт свободных слотов (чистые функции, покрыт тестами)
+src/lib/booking/create.ts  создание записи: транзакция, антиспам, Telegram
+src/app/[locale]/          страницы сайта
+src/app/admin/             админка
+tests/                     Vitest
+```
