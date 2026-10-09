@@ -9,6 +9,8 @@ export const media: {
   hero: { src: string; alt: LocalizedText } | null;
   /** Фото для блока «До и после» — по порядку подписей home.beforeAfter.cases. */
   beforeAfter: { before: string; after: string }[];
+  /** Фото клиники: блок «Клиника» на главной и на странице «О клинике». Пусто — блок скрыт. */
+  clinic: { src: string; caption: LocalizedText }[];
   /** Галерея «Наши работы» на странице «О клинике». Пусто — секция скрыта. */
   works: { src: string; caption: LocalizedText }[];
 } = {
@@ -19,6 +21,13 @@ export const media: {
       ky: "Тиш доктур Илгиз Асылбеков AsilDent кабинетинде",
     },
   },
+  // Фото клиники прислала клиника; uv.jpg — из карточки 2GIS (обрезан водяной знак).
+  clinic: [
+    { src: "/clinic/reception.jpg", caption: { ru: "Ресепшен и зона ожидания", ky: "Кабыл алуу жана күтүү жайы" } },
+    { src: "/clinic/cabinet.jpg", caption: { ru: "Лечебный кабинет", ky: "Дарылоо кабинети" } },
+    { src: "/clinic/hall.jpg", caption: { ru: "Холл и кабинеты врачей", ky: "Холл жана дарыгерлердин кабинеттери" } },
+    { src: "/clinic/uv.jpg", caption: { ru: "Кварцевание кабинета между приёмами", ky: "Кабыл алуулардын ортосунда кабинетти кварцтоо" } },
+  ],
   beforeAfter: [
     { before: "/cases/braces-before.jpg", after: "/cases/braces-after.jpg" },
     { before: "/cases/chip-before.jpg", after: "/cases/chip-after.jpg" },

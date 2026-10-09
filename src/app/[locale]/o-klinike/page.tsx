@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import { getTranslations } from "next-intl/server";
 import { Benefits } from "@/components/home/benefits";
+import { ClinicGallery } from "@/components/home/clinic-gallery";
 import { CtaBand } from "@/components/site/cta-band";
 import { PageHeader } from "@/components/site/page-header";
 import { Reveal } from "@/components/site/reveal";
@@ -61,6 +62,15 @@ export default async function AboutPage() {
           ))}
         </dl>
       </div>
+
+      {media.clinic.length > 0 && (
+        <section className="container-page py-12 lg:pb-20" aria-labelledby="clinic-title">
+          <h2 id="clinic-title" className="section-title mb-10">
+            {t("clinicTitle")}
+          </h2>
+          <ClinicGallery locale={locale} />
+        </section>
+      )}
 
       <section className="container-page py-12" aria-labelledby="values-title">
         <h2 id="values-title" className="section-title">

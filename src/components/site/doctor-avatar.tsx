@@ -39,7 +39,7 @@ export function DoctorAvatar({
   if (photoUrl) {
     return (
       <div className={cn("relative overflow-hidden bg-muted", className)}>
-        <Image src={photoUrl} alt={alt} fill sizes={sizes} priority={priority} className="object-cover" />
+        <Image src={photoUrl} alt={alt} fill sizes={sizes} priority={priority} className="object-cover object-[center_25%]" />
       </div>
     );
   }

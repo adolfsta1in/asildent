@@ -3,6 +3,7 @@ import { getTranslations } from "next-intl/server";
 import { BeforeAfter } from "@/components/home/before-after";
 import { media } from "@/config/media";
 import { Benefits } from "@/components/home/benefits";
+import { ClinicGallery } from "@/components/home/clinic-gallery";
 import { ContactsSection } from "@/components/home/contacts-section";
 import { DoctorsSection } from "@/components/home/doctors-section";
 import { Faq } from "@/components/home/faq";
@@ -23,7 +24,11 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function HomePage() {
   const locale = await getLocale();
-  const [clinic, tba] = await Promise.all([getClinic(), getTranslations({ locale, namespace: "home.beforeAfter" })]);
+  const [clinic, tba, tct] = await Promise.all([
+    getClinic(),
+    getTranslations({ locale, namespace: "home.beforeAfter" }),
+    getTranslations({ locale, namespace: "home.clinicTour" }),
+  ]);
 
   return (
     <>
@@ -31,6 +36,14 @@ export default async function HomePage() {
       <Benefits locale={locale} />
       <PopularServices locale={locale} />
       <DoctorsSection locale={locale} />
+      {media.clinic.length > 0 && (
+        <section className="section lg:pb-32" aria-labelledby="clinic-title">
+          <div className="container-page">
+            <SectionHeading id="clinic-title" eyebrow={tct("eyebrow")} title={tct("title")} lead={tct("lead")} />
+            <ClinicGallery locale={locale} />
+          </div>
+        </section>
+      )}
       <Steps locale={locale} />
       <section className="section" aria-labelledby="ba-title">
         <div className="container-page">
