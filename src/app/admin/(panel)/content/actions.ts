@@ -5,6 +5,7 @@ import { bool, int, localized, str, type FormState } from "@/lib/admin/form";
 import { requireAdmin } from "@/lib/auth/session";
 import { TAGS } from "@/lib/cache-tags";
 import { db } from "@/lib/db";
+import { syncTwoGisReviews } from "@/lib/reviews/sync";
 
 function invalidate() {
   updateTag(TAGS.content);
@@ -88,4 +89,16 @@ export async function moveReview(id: string, direction: -1 | 1) {
 
 export async function moveFaq(id: string, direction: -1 | 1) {
   return move("faq", id, direction);
+}
+
+/** Кнопка «Обновить из 2GIS» в админке — то же, что ежедневный cron. */
+export async function syncReviewsFromTwoGis(): Promise<{ ok: boolean; message: string }> {
+  await requireAdmin();
+  try {
+    const { total, added, hidden } = await syncTwoGisReviews();
+    invalidate();
+    return { ok: true, message: `Отзывов на 5★ в 2GIS: ${total}. Новых: ${added}${hidden ? `, снято с публикации: ${hidden}` : ""}` };
+  } catch (e) {
+    return { ok: false, message: e instanceof Error ? e.message : "Не удалось загрузить отзывы" };
+  }
 }

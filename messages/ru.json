@@ -173,7 +173,8 @@
       "eyebrow": "Отзывы",
       "title": "Что говорят пациенты",
       "demoNote": "Отзывы на демо-сайте вымышлены и показаны для примера.",
-      "ratingLabel": "Оценка {rating} из 5"
+      "ratingLabel": "Оценка {rating} из 5",
+      "allOn2gis": "Все отзывы в 2GIS · рейтинг {rating}"
     },
     "faq": {
       "eyebrow": "Вопросы",

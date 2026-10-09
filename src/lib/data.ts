@@ -132,7 +132,10 @@ export async function getReviews(): Promise<ReviewDTO[]> {
   cacheLife("max");
   cacheTag(TAGS.content);
 
-  const rows = await db.review.findMany({ where: { isPublished: true }, orderBy: { sortOrder: "asc" } });
+  const rows = await db.review.findMany({
+    where: { isPublished: true },
+    orderBy: [{ publishedAt: { sort: "desc", nulls: "last" } }, { sortOrder: "asc" }],
+  });
   return rows.map((r) => ({
     id: r.id,
     authorName: r.authorName,

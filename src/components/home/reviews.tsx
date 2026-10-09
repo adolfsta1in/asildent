@@ -1,19 +1,26 @@
-import { Info, Quote, Star } from "lucide-react";
+import { ArrowUpRight, Info, Quote, Star } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { Reveal } from "@/components/site/reveal";
 import { SectionHeading } from "@/components/site/section-heading";
 import type { Locale } from "@/i18n/routing";
 import { getReviews } from "@/lib/data";
+import { getClinic } from "@/lib/settings";
 import { tr } from "@/lib/localized";
 import { cn } from "@/lib/utils";
 
+const LIMIT = 9;
+const MOBILE = 4;
+
 export async function Reviews({ locale }: { locale: Locale }) {
-  const [reviews, t, tc] = await Promise.all([
+  const [all, clinic, t, tc] = await Promise.all([
     getReviews(),
+    getClinic(),
     getTranslations({ locale, namespace: "home.reviews" }),
     getTranslations({ locale, namespace: "common" }),
   ]);
-  if (reviews.length === 0) return null;
+  if (all.length === 0) return null;
+  // Свежие отзывы; на телефоне — первые MOBILE, чтобы блок не растягивался на несколько экранов.
+  const reviews = all.slice(0, LIMIT);
   const hasDemo = reviews.some((r) => r.isDemo);
 
   return (
@@ -38,7 +45,11 @@ export async function Reviews({ locale }: { locale: Locale }) {
               as="li"
               key={r.id}
              
-              className={cn("mb-4 break-inside-avoid rounded-3xl border bg-card p-6 sm:p-7", i === 0 && "lg:bg-primary-soft")}
+              className={cn(
+                "mb-4 break-inside-avoid rounded-3xl border bg-card p-6 sm:p-7",
+                i === 0 && "lg:bg-primary-soft",
+                i >= MOBILE && "max-md:hidden",
+              )}
             >
               <figure>
                 <div className="flex items-center justify-between">
@@ -74,6 +85,17 @@ export async function Reviews({ locale }: { locale: Locale }) {
             </Reveal>
           ))}
         </ul>
+        {clinic.twoGisUrl && (
+          <a
+            href={`${clinic.twoGisUrl.replace(/\/$/, "")}/tab/reviews`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-4 inline-flex items-center gap-1.5 rounded-full border bg-card px-5 py-3 text-sm font-semibold text-ink transition-colors hover:border-primary hover:text-primary"
+          >
+            {t("allOn2gis", { rating: clinic.rating.toFixed(1).replace(".", ",") })}
+            <ArrowUpRight className="size-4" aria-hidden />
+          </a>
+        )}
       </div>
     </section>
   );

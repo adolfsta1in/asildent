@@ -188,6 +188,11 @@ model Review {
   isDemo      Boolean  @default(true)
   isPublished Boolean  @default(true)
   sortOrder   Int      @default(0)
+  /// Источник отзыва ("2gis") и его id там — для автоматической синхронизации. null — добавлен вручную.
+  source      String?
+  externalId  String?   @unique
+  /// Дата отзыва на площадке.
+  publishedAt DateTime?
   createdAt   DateTime @default(now())
 }
 
