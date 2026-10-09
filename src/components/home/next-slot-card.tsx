@@ -17,20 +17,23 @@ type Slot = { start: string; doctorSlug: string; doctorName: unknown } | null;
 export function NextSlotCard({
   locale,
   labels,
+  doctorSlug,
 }: {
   locale: string;
+  /** Только окна этого врача (когда на фото рядом — он). */
+  doctorSlug?: string;
   labels: { title: string; cta: string; today: string; tomorrow: string };
 }) {
   const [state, setState] = useState<{ slot: Slot; now: number } | null>(null);
 
   useEffect(() => {
     const controller = new AbortController();
-    fetch("/api/next-slot", { signal: controller.signal })
+    fetch(doctorSlug ? `/api/next-slot?doctor=${doctorSlug}` : "/api/next-slot", { signal: controller.signal })
       .then((r) => r.json())
       .then((d: { slot: Slot }) => setState({ slot: d.slot, now: Date.now() }))
       .catch(() => {});
     return () => controller.abort();
-  }, []);
+  }, [doctorSlug]);
 
   if (!state) return <div className="h-[5.5rem] animate-pulse rounded-3xl border bg-card/90 shadow-lift sm:h-[6.25rem]" aria-hidden />;
   if (!state.slot) return null;

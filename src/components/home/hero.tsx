@@ -1,10 +1,12 @@
-import { CalendarCheck, Phone, ShieldCheck, Star } from "lucide-react";
+import { ArrowUpRight, CalendarCheck, Phone, ShieldCheck, Star } from "lucide-react";
 import Image from "next/image";
 import { getTranslations } from "next-intl/server";
 import { Button } from "@/components/ui/button";
+import type { LocalizedText } from "@/config/clinic";
 import { media } from "@/config/media";
 import type { Locale } from "@/i18n/routing";
 import { Link } from "@/i18n/navigation";
+import { getDoctorBySlug } from "@/lib/data";
 import { formatNumber, telHref } from "@/lib/format";
 import { yearsSince } from "@/lib/i18n-format";
 import { tr } from "@/lib/localized";
@@ -85,6 +87,7 @@ export async function Hero({ clinic, locale }: { clinic: ClinicSettings; locale:
 
         <HeroVisual
           locale={locale}
+          doctor={media.hero?.doctorSlug ? await getDoctorBySlug(media.hero.doctorSlug) : null}
           labels={{
             sterile: t("badgeSterile"),
             nextSlot: t("nextSlot"),
@@ -100,9 +103,12 @@ export async function Hero({ clinic, locale }: { clinic: ClinicSettings; locale:
 
 function HeroVisual({
   locale,
+  doctor,
   labels,
 }: {
   locale: Locale;
+  /** Врач на фото: плашки — его имя и его ближайшее время. */
+  doctor: { slug: string; name: LocalizedText; specialty: LocalizedText } | null;
   labels: { sterile: string; nextSlot: string; nextSlotCta: string; today: string; tomorrow: string };
 }) {
   return (
@@ -146,15 +152,29 @@ function HeroVisual({
           </svg>
         )}
 
-        <div className="absolute top-5 left-5 flex items-center gap-2 rounded-full bg-card/90 px-3.5 py-2 text-xs font-semibold text-ink shadow-soft backdrop-blur sm:top-7 sm:left-7">
-          <ShieldCheck className="size-4 text-primary" aria-hidden />
-          {labels.sterile}
-        </div>
+        {doctor ? (
+          <Link
+            href={`/vrachi/${doctor.slug}`}
+            className="group absolute top-5 left-5 flex max-w-[calc(100%-2.5rem)] items-center gap-2 rounded-2xl bg-card/90 py-2 pr-3 pl-3.5 shadow-soft backdrop-blur transition-colors hover:bg-card sm:top-7 sm:left-7"
+          >
+            <span className="min-w-0">
+              <span className="block truncate text-sm font-bold text-ink">{tr(doctor.name, locale)}</span>
+              <span className="block truncate text-xs text-muted-foreground">{tr(doctor.specialty, locale)}</span>
+            </span>
+            <ArrowUpRight className="size-4 shrink-0 text-primary" aria-hidden />
+          </Link>
+        ) : (
+          <div className="absolute top-5 left-5 flex items-center gap-2 rounded-full bg-card/90 px-3.5 py-2 text-xs font-semibold text-ink shadow-soft backdrop-blur sm:top-7 sm:left-7">
+            <ShieldCheck className="size-4 text-primary" aria-hidden />
+            {labels.sterile}
+          </div>
+        )}
       </div>
 
       <div className="absolute inset-x-4 -bottom-8 sm:inset-x-8">
         <NextSlotCard
           locale={locale}
+          doctorSlug={doctor?.slug}
           labels={{ title: labels.nextSlot, cta: labels.nextSlotCta, today: labels.today, tomorrow: labels.tomorrow }}
         />
       </div>

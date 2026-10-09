@@ -5,8 +5,11 @@
 import type { LocalizedText } from "./clinic";
 
 export const media: {
-  /** Фото справа на первом экране главной. */
-  hero: { src: string; alt: LocalizedText } | null;
+  /**
+   * Фото справа на первом экране главной. doctorSlug — если на фото врач: плашки на фото
+   * (имя и ближайшее свободное время) показываются про него. Без него — общие про клинику.
+   */
+  hero: { src: string; alt: LocalizedText; doctorSlug?: string } | null;
   /** Фото для блока «До и после» — по порядку подписей home.beforeAfter.cases. */
   beforeAfter: { before: string; after: string }[];
   /** Фото клиники: блок «Клиника» на главной и на странице «О клинике». Пусто — блок скрыт. */
@@ -16,6 +19,7 @@ export const media: {
 } = {
   hero: {
     src: "/clinic/hero.jpg",
+    doctorSlug: "asylbekov-ilgiz",
     alt: {
       ru: "Врач-стоматолог Ильгиз Асылбеков в кабинете AsilDent",
       ky: "Тиш доктур Илгиз Асылбеков AsilDent кабинетинде",

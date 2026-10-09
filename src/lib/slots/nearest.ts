@@ -7,16 +7,16 @@ import { nearestDoctorSlots } from "./service";
 export type NearestSlot = { start: string; doctorSlug: string; doctorName: unknown } | null;
 
 /**
- * Ближайшее свободное окно в клинике (для блока на главной).
+ * Ближайшее свободное окно в клинике (для блока на главной); с doctorSlug — только у этого врача.
  * Кэшируется на несколько минут и сбрасывается при новой записи или изменении графика.
  */
-export async function nearestClinicSlot(): Promise<NearestSlot> {
+export async function nearestClinicSlot(doctorSlug?: string): Promise<NearestSlot> {
   "use cache";
   cacheLife({ stale: 60, revalidate: 300, expire: 3600 });
   cacheTag(TAGS.schedule);
 
   const doctors = await db.doctor.findMany({
-    where: { isActive: true },
+    where: { isActive: true, ...(doctorSlug ? { slug: doctorSlug } : {}) },
     orderBy: { sortOrder: "asc" },
     select: {
       id: true,
