@@ -1,4 +1,5 @@
 import { Baby, BadgeCheck, Check, ClipboardList, HeartHandshake, ScanLine, ShieldCheck } from "lucide-react";
+import Image from "next/image";
 import { getTranslations } from "next-intl/server";
 import { Reveal } from "@/components/site/reveal";
 import { SectionHeading } from "@/components/site/section-heading";
@@ -33,6 +34,16 @@ export async function Benefits({ locale }: { locale: Locale }) {
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
           {/* Первый пункт — главный аргумент, выделен крупно (2×2 на десктопе) */}
           <Reveal className="relative flex flex-col justify-between overflow-hidden rounded-3xl bg-ink p-8 text-white md:col-span-2 lg:row-span-2 lg:p-10">
+            {/* Фон — фото улыбки: монохром с оттенком тёмно-синего фона (luminosity) и затемнение к тексту */}
+            <Image
+              src="/clinic/smile.jpg"
+              alt=""
+              fill
+              sizes="(min-width: 1024px) 60vw, 100vw"
+              className="object-cover object-[60%_35%] opacity-70 mix-blend-luminosity"
+            />
+            <div aria-hidden className="absolute inset-0 bg-gradient-to-t from-ink via-ink/80 to-primary/25" />
+            <div aria-hidden className="absolute inset-0 bg-gradient-to-r from-ink/70 via-transparent to-transparent" />
             <div
               aria-hidden
               className="absolute -top-20 -right-20 size-64 rounded-full bg-primary opacity-40 blur-3xl"
