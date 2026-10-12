@@ -6,6 +6,7 @@ import { DoctorAvatar } from "@/components/site/doctor-avatar";
 import { Input } from "@/components/ui/input";
 import type { LocalizedText } from "@/config/clinic";
 import type { FormState } from "@/lib/admin/form";
+import { ImageInput } from "../image-input";
 import { Field, LocalizedInput, Section, SubmitButton, SwitchField, useFormToast } from "../form-ui";
 
 export type DoctorFormValues = {
@@ -64,18 +65,8 @@ export function DoctorForm({ doctor }: { doctor?: DoctorFormValues }) {
             <DoctorAvatar name={doctor?.name.ru ?? "?"} photoUrl={null} seed={doctor?.slug ?? "new"} alt="" className="aspect-[4/5] w-32 rounded-2xl" />
           )}
           <div className="space-y-3">
-            <Field label="Загрузить фото" htmlFor="photo" error={e.photo} hint="JPG, PNG или WebP до 4 МБ">
-              <Input
-                id="photo"
-                name="photo"
-                type="file"
-                accept="image/jpeg,image/png,image/webp,image/avif"
-                onChange={(ev) => {
-                  const f = ev.target.files?.[0];
-                  if (f) setPreview(URL.createObjectURL(f));
-                }}
-                className="h-auto py-2"
-              />
+            <Field label="Загрузить фото" htmlFor="photo" error={e.photo} hint="JPG, PNG, WebP или фото с телефона — сожмётся автоматически">
+              <ImageInput id="photo" name="photo" onPreview={(url) => setPreview(url ?? doctor?.photoUrl ?? null)} />
             </Field>
             {doctor?.photoUrl && (
               <label className="flex items-center gap-2 text-sm">

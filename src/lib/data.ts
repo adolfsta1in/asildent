@@ -36,6 +36,7 @@ export type DoctorDTO = {
   experienceSince: number;
   photoUrl: string | null;
   serviceIds: string[];
+  certificates: { id: string; imageUrl: string; title: LocalizedText }[];
 };
 
 export type ReviewDTO = {
@@ -45,6 +46,15 @@ export type ReviewDTO = {
   rating: number;
   serviceName: LocalizedText | null;
   isDemo: boolean;
+};
+
+export type CaseDTO = {
+  id: string;
+  beforeUrl: string;
+  afterUrl: string;
+  title: LocalizedText;
+  description: LocalizedText;
+  doctor: { slug: string; name: LocalizedText } | null;
 };
 
 export type FaqDTO = { id: string; question: LocalizedText; answer: LocalizedText };
@@ -99,7 +109,10 @@ export async function getDoctors(): Promise<DoctorDTO[]> {
   const doctors = await db.doctor.findMany({
     where: { isActive: true },
     orderBy: { sortOrder: "asc" },
-    include: { services: { where: { service: { isActive: true } }, select: { serviceId: true } } },
+    include: {
+      services: { where: { service: { isActive: true } }, select: { serviceId: true } },
+      certificates: { orderBy: { sortOrder: "asc" }, select: { id: true, imageUrl: true, title: true } },
+    },
   });
 
   return doctors.map((d) => ({
@@ -112,6 +125,7 @@ export async function getDoctors(): Promise<DoctorDTO[]> {
     experienceSince: d.experienceSince,
     photoUrl: d.photoUrl,
     serviceIds: d.services.map((s) => s.serviceId),
+    certificates: d.certificates.map((c) => ({ id: c.id, imageUrl: c.imageUrl, title: asLocalized(c.title) })),
   }));
 }
 
@@ -153,4 +167,25 @@ export async function getFaqs(): Promise<FaqDTO[]> {
 
   const rows = await db.faq.findMany({ orderBy: { sortOrder: "asc" } });
   return rows.map((f) => ({ id: f.id, question: asLocalized(f.question), answer: asLocalized(f.answer) }));
+}
+
+/** Опубликованные кейсы «до и после» для главной. */
+export async function getCases(): Promise<CaseDTO[]> {
+  "use cache";
+  cacheLife("max");
+  cacheTag(TAGS.content, TAGS.doctors);
+
+  const rows = await db.beforeAfterCase.findMany({
+    where: { isPublished: true },
+    orderBy: { sortOrder: "asc" },
+    include: { doctor: { select: { slug: true, name: true, isActive: true } } },
+  });
+  return rows.map((c) => ({
+    id: c.id,
+    beforeUrl: c.beforeUrl,
+    afterUrl: c.afterUrl,
+    title: asLocalized(c.title),
+    description: asLocalized(c.description),
+    doctor: c.doctor?.isActive ? { slug: c.doctor.slug, name: asLocalized(c.doctor.name) } : null,
+  }));
 }

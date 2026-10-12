@@ -2,29 +2,40 @@
 
 import Image from "next/image";
 import { useId, useState } from "react";
+import { Link } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
 
-type Labels = { before: string; after: string; placeholder: string; slider: string; cases: string[] };
-type CaseImages = { before: string; after: string };
+type Labels = { before: string; after: string; placeholder: string; slider: string; doctor: string };
+/** Кейс: без фото (before/after) показываются заглушки — для шаблона без настоящих работ. */
+export type BeforeAfterCase = {
+  title: string;
+  description?: string;
+  before?: string;
+  after?: string;
+  doctor?: { name: string; href: string } | null;
+};
 
 /** Слайдер «до/после». Есть фото кейса — показываем их, нет — аккуратные заглушки. */
-export function BeforeAfter({ labels, images = [] }: { labels: Labels; images?: CaseImages[] }) {
+export function BeforeAfter({ labels, cases }: { labels: Labels; cases: BeforeAfterCase[] }) {
   const [value, setValue] = useState(50);
   const [active, setActive] = useState(0);
   const id = useId();
-  const photo = images[active];
+  const current = cases[active] ?? cases[0];
+  const photo = current?.before && current.after ? { before: current.before, after: current.after } : null;
+  if (!current) return null;
 
   return (
     <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1fr_18rem] lg:items-start">
+      <div className="min-w-0">
       <div className="relative aspect-[4/3] overflow-hidden rounded-3xl border bg-card select-none sm:aspect-[16/10]">
         {photo ? (
-          <CasePhoto src={photo.after} alt={`${labels.cases[active]} — ${labels.after}`} />
+          <CasePhoto src={photo.after} alt={`${current.title} — ${labels.after}`} />
         ) : (
           <TeethIllustration variant="after" seed={active} className="absolute inset-0" />
         )}
         <div className="absolute inset-0" style={{ clipPath: `inset(0 ${100 - value}% 0 0)` }}>
           {photo ? (
-            <CasePhoto src={photo.before} alt={`${labels.cases[active]} — ${labels.before}`} />
+            <CasePhoto src={photo.before} alt={`${current.title} — ${labels.before}`} />
           ) : (
             <TeethIllustration variant="before" seed={active} className="absolute inset-0" />
           )}
@@ -61,11 +72,25 @@ export function BeforeAfter({ labels, images = [] }: { labels: Labels; images?: 
           className="absolute inset-0 size-full cursor-ew-resize opacity-0"
         />
       </div>
+      {(current.description || current.doctor) && (
+        <div className="mt-5 max-w-2xl">
+          {current.description && <p className="leading-relaxed text-foreground/85 whitespace-pre-line">{current.description}</p>}
+          {current.doctor && (
+            <p className="mt-2 text-sm text-muted-foreground">
+              {labels.doctor}:{" "}
+              <Link href={current.doctor.href} className="font-semibold text-primary hover:underline">
+                {current.doctor.name}
+              </Link>
+            </p>
+          )}
+        </div>
+      )}
+      </div>
 
       <div className="flex gap-2 overflow-x-auto pb-1 lg:flex-col" role="tablist" aria-label={labels.slider}>
-        {labels.cases.map((c, i) => (
+        {cases.map((c, i) => (
           <button
-            key={c}
+            key={`${i}-${c.title}`}
             type="button"
             role="tab"
             aria-selected={active === i}
@@ -78,8 +103,8 @@ export function BeforeAfter({ labels, images = [] }: { labels: Labels; images?: 
               active === i ? "border-primary bg-primary-soft text-primary-soft-foreground" : "bg-card text-ink hover:border-input",
             )}
           >
-            <span className="mr-2 font-heading text-muted-foreground">0{i + 1}</span>
-            {c}
+            <span className="mr-2 font-heading text-muted-foreground">{String(i + 1).padStart(2, "0")}</span>
+            {c.title}
           </button>
         ))}
       </div>

@@ -13,7 +13,9 @@ import { Reviews } from "@/components/home/reviews";
 import { Steps } from "@/components/home/steps";
 import { CtaBand } from "@/components/site/cta-band";
 import { SectionHeading } from "@/components/site/section-heading";
+import { getCases } from "@/lib/data";
 import { getLocale } from "@/lib/locale";
+import { tr } from "@/lib/localized";
 import { pageAlternates } from "@/lib/seo/metadata";
 import { getClinic } from "@/lib/settings";
 
@@ -24,10 +26,11 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function HomePage() {
   const locale = await getLocale();
-  const [clinic, tba, tct] = await Promise.all([
+  const [clinic, tba, tct, cases] = await Promise.all([
     getClinic(),
     getTranslations({ locale, namespace: "home.beforeAfter" }),
     getTranslations({ locale, namespace: "home.clinicTour" }),
+    getCases(),
   ]);
 
   return (
@@ -54,9 +57,20 @@ export default async function HomePage() {
               after: tba("after"),
               placeholder: tba("placeholder"),
               slider: tba("sliderLabel"),
-              cases: [tba("cases.1"), tba("cases.2"), tba("cases.3")],
+              doctor: tba("doctor"),
             }}
-            images={media.beforeAfter}
+            cases={
+              cases.length > 0
+                ? cases.map((c) => ({
+                    title: tr(c.title, locale),
+                    description: tr(c.description, locale),
+                    before: c.beforeUrl,
+                    after: c.afterUrl,
+                    doctor: c.doctor ? { name: tr(c.doctor.name, locale), href: `/vrachi/${c.doctor.slug}` } : null,
+                  }))
+                : // Кейсов в админке ещё нет — заглушки с подписями из messages
+                  [{ title: tba("cases.1") }, { title: tba("cases.2") }, { title: tba("cases.3") }]
+            }
           />
         </div>
       </section>

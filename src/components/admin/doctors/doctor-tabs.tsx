@@ -8,6 +8,7 @@ const TABS = [
   { id: "profile", label: "Профиль" },
   { id: "services", label: "Услуги" },
   { id: "schedule", label: "График" },
+  { id: "certificates", label: "Сертификаты" },
 ] as const;
 
 /** Вкладки карточки врача; активная вкладка — в URL (?tab=), чтобы ссылка открывала нужный раздел. */
@@ -19,7 +20,7 @@ export function DoctorTabs({ panels }: { panels: Record<(typeof TABS)[number]["i
 
   return (
     <Tabs value={current} onValueChange={(v) => router.replace(`${pathname}?tab=${v}`, { scroll: false })}>
-      <TabsList className="mb-5">
+      <TabsList className="mb-5 max-w-full justify-start overflow-x-auto">
         {TABS.map((t) => (
           <TabsTrigger key={t.id} value={t.id} className="px-4">
             {t.label}

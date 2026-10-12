@@ -2,6 +2,7 @@ import { ArrowLeft, ExternalLink } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { CertificatesEditor } from "@/components/admin/doctors/certificates-editor";
 import { DoctorForm } from "@/components/admin/doctors/doctor-form";
 import { DoctorTabs } from "@/components/admin/doctors/doctor-tabs";
 import { ExceptionsEditor } from "@/components/admin/doctors/exceptions-editor";
@@ -25,6 +26,7 @@ export default async function DoctorEditPage({ params }: PageProps<"/admin/docto
         services: true,
         scheduleRules: true,
         exceptions: { where: { date: { gte: today } }, orderBy: { date: "asc" } },
+        certificates: { orderBy: { sortOrder: "asc" } },
       },
     }),
     db.serviceCategory.findMany({
@@ -78,6 +80,12 @@ export default async function DoctorEditPage({ params }: PageProps<"/admin/docto
                   category: tr(c.name, "ru"),
                   services: c.services.map((s) => ({ id: s.id, name: tr(s.name, "ru"), durationMin: s.durationMin })),
                 }))}
+            />
+          ),
+          certificates: (
+            <CertificatesEditor
+              doctorId={doctor.id}
+              items={doctor.certificates.map((c) => ({ id: c.id, imageUrl: c.imageUrl, title: asLocalized(c.title) }))}
             />
           ),
           schedule: (

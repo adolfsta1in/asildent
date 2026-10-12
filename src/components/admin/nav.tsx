@@ -1,6 +1,6 @@
 "use client";
 
-import { CalendarDays, ExternalLink, LayoutDashboard, LogOut, MessageSquareQuote, Settings, Stethoscope, UsersRound } from "lucide-react";
+import { CalendarDays, ExternalLink, Images, LayoutDashboard, ListTodo, LogOut, MessageSquareQuote, Settings, Stethoscope, UsersRound } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { logout } from "@/app/admin/actions";
@@ -9,8 +9,11 @@ import { cn } from "@/lib/utils";
 export const ADMIN_NAV = [
   { href: "/admin", label: "Сводка", short: "Сводка", Icon: LayoutDashboard, exact: true },
   { href: "/admin/appointments", label: "Записи", short: "Записи", Icon: CalendarDays },
+  { href: "/admin/tasks", label: "Задачи", short: "Задачи", Icon: ListTodo },
   { href: "/admin/doctors", label: "Врачи", short: "Врачи", Icon: UsersRound },
-  { href: "/admin/services", label: "Услуги и цены", short: "Услуги", Icon: Stethoscope },
+  // desktopOnly — на телефоне не в нижнем меню, а иконками в верхней панели (AdminTopbar)
+  { href: "/admin/services", label: "Услуги и цены", short: "Услуги", Icon: Stethoscope, desktopOnly: true },
+  { href: "/admin/cases", label: "До и после", short: "До/после", Icon: Images, desktopOnly: true },
   { href: "/admin/content", label: "Отзывы и FAQ", short: "Контент", Icon: MessageSquareQuote, desktopOnly: true },
   { href: "/admin/settings", label: "Настройки", short: "Настройки", Icon: Settings },
 ];
@@ -82,9 +85,11 @@ export function AdminTopbar({ clinicName }: { clinicName: string }) {
     <header className="sticky top-0 z-30 flex h-14 items-center justify-between border-b bg-card/90 px-4 backdrop-blur lg:hidden">
       <p className="truncate font-heading font-bold text-ink">{clinicName}</p>
       <div className="flex items-center gap-1">
-        <Link href="/admin/content" className="rounded-lg p-2 text-muted-foreground hover:bg-muted" aria-label="Отзывы и FAQ">
-          <MessageSquareQuote className="size-5" />
-        </Link>
+        {ADMIN_NAV.filter((i) => i.desktopOnly).map(({ href, label, Icon }) => (
+          <Link key={href} href={href} className="rounded-lg p-2 text-muted-foreground hover:bg-muted" aria-label={label} title={label}>
+            <Icon className="size-5" />
+          </Link>
+        ))}
         <a href="/" target="_blank" className="rounded-lg p-2 text-muted-foreground hover:bg-muted" aria-label="Открыть сайт">
           <ExternalLink className="size-5" />
         </a>

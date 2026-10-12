@@ -9,7 +9,7 @@ import { clinicDefaults } from "../src/config/clinic";
 import { PrismaClient } from "../src/generated/prisma/client";
 import { cellStarts } from "../src/lib/slots/cells";
 import { addDays, hhmmToMinutes, toDateKey, weekdayOf, zonedToUtc } from "../src/lib/time";
-import { categories, doctors, faqs, reviews, services } from "./seed-data";
+import { cases, categories, doctors, faqs, reviews, services } from "./seed-data";
 
 const url = process.env.DATABASE_URL!;
 const db = new PrismaClient({
@@ -37,11 +37,14 @@ function code(i: number) {
 
 async function main() {
   console.log("Очищаю БД…");
+  await db.task.deleteMany();
   await db.bookedSlot.deleteMany();
   await db.appointment.deleteMany();
   await db.scheduleException.deleteMany();
   await db.scheduleRule.deleteMany();
   await db.doctorService.deleteMany();
+  await db.doctorCertificate.deleteMany();
+  await db.beforeAfterCase.deleteMany();
   await db.doctor.deleteMany();
   await db.service.deleteMany();
   await db.serviceCategory.deleteMany();
@@ -209,6 +212,11 @@ async function main() {
   }
   for (const [i, f] of faqs.entries()) {
     await db.faq.create({ data: { question: f.q, answer: f.a, sortOrder: i } });
+  }
+  for (const [i, c] of cases.entries()) {
+    await db.beforeAfterCase.create({
+      data: { beforeUrl: c.before, afterUrl: c.after, title: c.title, description: c.description, sortOrder: i },
+    });
   }
 
   console.log("Готово ✔");

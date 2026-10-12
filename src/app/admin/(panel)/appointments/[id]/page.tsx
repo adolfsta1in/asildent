@@ -6,8 +6,11 @@ import { WhatsAppIcon } from "@/components/icons";
 import { DeleteAppointmentButton } from "@/components/admin/appointments/delete-button";
 import { RescheduleForm } from "@/components/admin/appointments/reschedule-form";
 import { StatusSelect } from "@/components/admin/appointments/status-select";
+import { TaskForm, TaskList } from "@/components/admin/tasks/tasks-ui";
 import { Button } from "@/components/ui/button";
-import { appointmentInclude } from "@/lib/admin/appointments";
+import { appointmentInclude, todayKey } from "@/lib/admin/appointments";
+import { compareTasks } from "@/lib/admin/tasks";
+import { taskInclude, toTaskView } from "@/lib/admin/tasks-db";
 import { db } from "@/lib/db";
 import { formatNumber, whatsappHref } from "@/lib/format";
 import { tr } from "@/lib/localized";
@@ -21,6 +24,9 @@ export default async function AppointmentPage({ params }: PageProps<"/admin/appo
   const { id } = await params;
   const a = await db.appointment.findUnique({ where: { id }, include: appointmentInclude });
   if (!a) notFound();
+  const [tasks, today] = await Promise.all([db.task.findMany({ where: { appointmentId: a.id }, include: taskInclude }), todayKey()]);
+  // Открытые сверху по сроку, выполненные — внизу
+  tasks.sort((x, y) => Number(x.isDone) - Number(y.isDone) || compareTasks(x, y));
   const canReschedule = a.status === "NEW" || a.status === "CONFIRMED";
   const serviceDoctors = canReschedule
     ? await db.doctor.findMany({
@@ -94,6 +100,19 @@ export default async function AppointmentPage({ params }: PageProps<"/admin/appo
           </div>
         </div>
       </div>
+
+      <section aria-labelledby="appt-tasks" className="mt-6 rounded-3xl border bg-card p-5 sm:p-6">
+        <h2 id="appt-tasks" className="text-lg font-bold">
+          Задачи по пациенту
+        </h2>
+        <p className="mt-1 mb-4 text-sm text-muted-foreground">Попадут в общий список «Задачи» со ссылкой на эту запись.</p>
+        {tasks.length > 0 && (
+          <div className="mb-4">
+            <TaskList tasks={tasks.map(toTaskView)} today={today} showAppointment={false} />
+          </div>
+        )}
+        <TaskForm today={today} appointmentId={a.id} placeholder={`Например: перезвонить ${a.patientName} после визита`} />
+      </section>
     </div>
   );
 }

@@ -10,8 +10,6 @@ export const media: {
    * (имя и ближайшее свободное время) показываются про него. Без него — общие про клинику.
    */
   hero: { src: string; alt: LocalizedText; doctorSlug?: string } | null;
-  /** Фото для блока «До и после» — по порядку подписей home.beforeAfter.cases. */
-  beforeAfter: { before: string; after: string }[];
   /** Фото клиники: блок «Клиника» на главной и на странице «О клинике». Пусто — блок скрыт. */
   clinic: { src: string; caption: LocalizedText }[];
   /** Галерея «Наши работы» на странице «О клинике». Пусто — секция скрыта. */
@@ -31,11 +29,6 @@ export const media: {
     { src: "/clinic/cabinet.jpg", caption: { ru: "Лечебный кабинет", ky: "Дарылоо кабинети" } },
     { src: "/clinic/hall.jpg", caption: { ru: "Холл и кабинеты врачей", ky: "Холл жана дарыгерлердин кабинеттери" } },
     { src: "/clinic/uv.jpg", caption: { ru: "Кварцевание кабинета между приёмами", ky: "Кабыл алуулардын ортосунда кабинетти кварцтоо" } },
-  ],
-  beforeAfter: [
-    { before: "/cases/braces-before.jpg", after: "/cases/braces-after.jpg" },
-    { before: "/cases/chip-before.jpg", after: "/cases/chip-after.jpg" },
-    { before: "/cases/braces-top-before.jpg", after: "/cases/braces-top-after.jpg" },
   ],
   // ДЕМО: фото works/* взяты из постов с меткой Instagram «AI content» —
   // перед официальным запуском подтвердить у клиники, что это реальные работы.

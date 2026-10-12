@@ -89,6 +89,8 @@ model Doctor {
   services        DoctorService[]
   scheduleRules   ScheduleRule[]
   exceptions      ScheduleException[]
+  certificates    DoctorCertificate[]
+  cases           BeforeAfterCase[]
   appointments    Appointment[]
   bookedSlots     BookedSlot[]
   createdAt       DateTime            @default(now())
@@ -156,6 +158,7 @@ model Appointment {
   consentAt    DateTime?
   ip           String?
   bookedSlots  BookedSlot[]
+  tasks        Task[]
   createdAt    DateTime     @default(now())
   updatedAt    DateTime     @updatedAt
 
@@ -209,4 +212,55 @@ model RateLimitHit {
   createdAt DateTime @default(now())
 
   @@index([key, createdAt])
+}
+
+/// Сертификат или диплом врача — фото с подписью, показывается на странице врача.
+model DoctorCertificate {
+  id        String   @id @default(cuid())
+  doctorId  String
+  doctor    Doctor   @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  imageUrl  String
+  /// { ru, ky } — например «Курс по эндодонтии, 2024»
+  title     Json
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+
+  @@index([doctorId, sortOrder])
+}
+
+/// Кейс «до и после» для блока на главной.
+model BeforeAfterCase {
+  id          String   @id @default(cuid())
+  beforeUrl   String
+  afterUrl    String
+  title       Json
+  description Json
+  doctorId    String?
+  doctor      Doctor?  @relation(fields: [doctorId], references: [id], onDelete: SetNull)
+  isPublished Boolean  @default(true)
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([sortOrder])
+}
+
+/// Задача администратора (как в CRM). dueDate — YYYY-MM-DD по Бишкеку, dueMin — время в минутах (необязательно).
+/// priority: normal | high
+model Task {
+  id            String       @id @default(cuid())
+  title         String
+  note          String?
+  dueDate       String?
+  dueMin        Int?
+  priority      String       @default("normal")
+  isDone        Boolean      @default(false)
+  doneAt        DateTime?
+  appointmentId String?
+  appointment   Appointment? @relation(fields: [appointmentId], references: [id], onDelete: SetNull)
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  @@index([isDone, dueDate])
+  @@index([appointmentId])
 }

@@ -8,7 +8,7 @@ import { requireAdmin } from "@/lib/auth/session";
 import { TAGS } from "@/lib/cache-tags";
 import { db } from "@/lib/db";
 import { slugify } from "@/lib/slugify";
-import { saveImage, UploadError } from "@/lib/storage";
+import { deleteImage, saveImage, UploadError } from "@/lib/storage";
 import { addDays, eachDateKey, isDateKey } from "@/lib/time";
 
 function invalidate() {
@@ -168,4 +168,52 @@ export async function deleteDoctor(id: string): Promise<FormState> {
   await db.doctor.delete({ where: { id } });
   invalidate();
   redirect("/admin/doctors");
+}
+
+// ── Сертификаты ──────────────────────────────────────────────────────────────
+
+export async function addCertificate(doctorId: string, _: FormState, fd: FormData): Promise<FormState> {
+  await requireAdmin();
+  const image = file(fd, "image");
+  if (!image) return { errors: { image: "Выберите фото сертификата" }, message: "Выберите фото сертификата" };
+  let imageUrl: string;
+  try {
+    imageUrl = await saveImage(image, "certificates");
+  } catch (e) {
+    if (e instanceof UploadError) return { errors: { image: e.message }, message: e.message };
+    throw e;
+  }
+  const max = await db.doctorCertificate.aggregate({ where: { doctorId }, _max: { sortOrder: true } });
+  await db.doctorCertificate.create({
+    data: { doctorId, imageUrl, title: localized(fd, "title"), sortOrder: (max._max.sortOrder ?? 0) + 1 },
+  });
+  invalidate();
+  return { ok: true, message: "Сертификат добавлен" };
+}
+
+export async function updateCertificate(id: string, _: FormState, fd: FormData): Promise<FormState> {
+  await requireAdmin();
+  await db.doctorCertificate.update({ where: { id }, data: { title: localized(fd, "title") } });
+  invalidate();
+  return { ok: true, message: "Подпись сохранена" };
+}
+
+export async function deleteCertificate(id: string): Promise<void> {
+  await requireAdmin();
+  const cert = await db.doctorCertificate.delete({ where: { id } });
+  await deleteImage(cert.imageUrl);
+  invalidate();
+}
+
+export async function moveCertificate(id: string, direction: -1 | 1): Promise<void> {
+  await requireAdmin();
+  const cert = await db.doctorCertificate.findUnique({ where: { id }, select: { doctorId: true } });
+  if (!cert) return;
+  const list = await db.doctorCertificate.findMany({ where: { doctorId: cert.doctorId }, orderBy: { sortOrder: "asc" }, select: { id: true } });
+  const i = list.findIndex((c) => c.id === id);
+  const j = i + direction;
+  if (i < 0 || j < 0 || j >= list.length) return;
+  [list[i], list[j]] = [list[j], list[i]];
+  await db.$transaction(list.map((c, idx) => db.doctorCertificate.update({ where: { id: c.id }, data: { sortOrder: idx } })));
+  invalidate();
 }

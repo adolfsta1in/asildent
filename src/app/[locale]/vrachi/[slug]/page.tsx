@@ -2,6 +2,7 @@ import { CalendarCheck, GraduationCap } from "lucide-react";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
+import { CertificatesGallery } from "@/components/doctors/certificates-gallery";
 import { NearestSlots } from "@/components/doctors/nearest-slots";
 import { DoctorAvatar } from "@/components/site/doctor-avatar";
 import { JsonLd } from "@/components/site/json-ld";
@@ -140,6 +141,24 @@ export default async function DoctorPage({ params }: PageProps<"/[locale]/vrachi
                   </li>
                 ))}
               </ul>
+            </section>
+          )}
+
+          {doctor.certificates.length > 0 && (
+            <section aria-labelledby="doctor-certs" className="mt-12">
+              <h2 id="doctor-certs" className="text-2xl font-bold">
+                {t("certificates")}
+              </h2>
+              <CertificatesGallery
+                items={doctor.certificates.map((c) => ({ id: c.id, imageUrl: c.imageUrl, title: tr(c.title, locale) }))}
+                labels={{
+                  open: t("certificateOpen"),
+                  close: t("certificateClose"),
+                  prev: t("certificatePrev"),
+                  next: t("certificateNext"),
+                  fallbackTitle: t("certificateFallback"),
+                }}
+              />
             </section>
           )}
 

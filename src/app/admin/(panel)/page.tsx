@@ -1,10 +1,13 @@
-import { ArrowRight, BellRing, CalendarCheck, CalendarDays, Plus } from "lucide-react";
+import { ArrowRight, BellRing, CalendarCheck, CalendarDays, ListTodo, Plus } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { StatusBadge } from "@/components/admin/appointments/status-badge";
 import { PageTitle } from "@/components/admin/page-title";
+import { TaskForm, TaskList } from "@/components/admin/tasks/tasks-ui";
 import { Button } from "@/components/ui/button";
 import { appointmentInclude, todayKey } from "@/lib/admin/appointments";
+import { compareTasks } from "@/lib/admin/tasks";
+import { taskInclude, toTaskView } from "@/lib/admin/tasks-db";
 import { OCCUPYING } from "@/lib/appointment-status";
 import { db } from "@/lib/db";
 import { tr } from "@/lib/localized";
@@ -20,7 +23,7 @@ export default async function DashboardPage() {
   const tomorrowStart = zonedToUtc(addDays(today, 1), 0);
   const weekEnd = zonedToUtc(addDays(today, 7), 0);
 
-  const [todayCount, newCount, weekCount, upcoming, newOnes] = await Promise.all([
+  const [todayCount, newCount, weekCount, upcoming, newOnes, dueTasks] = await Promise.all([
     db.appointment.count({ where: { startAt: { gte: dayStart, lt: tomorrowStart }, status: { in: OCCUPYING } } }),
     db.appointment.count({ where: { status: "NEW", startAt: { gte: now } } }),
     db.appointment.count({ where: { startAt: { gte: dayStart, lt: weekEnd }, status: { in: OCCUPYING } } }),
@@ -36,12 +39,23 @@ export default async function DashboardPage() {
       orderBy: { createdAt: "desc" },
       take: 5,
     }),
+    // Задачи на сегодня и просроченные
+    db.task.findMany({ where: { isDone: false, dueDate: { lte: today } }, include: taskInclude }),
   ]);
+  dueTasks.sort(compareTasks);
+  const overdueCount = dueTasks.filter((t) => t.dueDate! < today).length;
 
   const stats = [
     { label: "Сегодня", value: todayCount, href: `/admin/appointments?view=day&date=${today}`, Icon: CalendarCheck },
     { label: "Ждут подтверждения", value: newCount, href: "/admin/appointments?status=NEW", Icon: BellRing, accent: newCount > 0 },
     { label: "На 7 дней вперёд", value: weekCount, href: "/admin/appointments?view=week", Icon: CalendarDays },
+    {
+      label: overdueCount ? `Задачи · ${overdueCount} просрочено` : "Задачи на сегодня",
+      value: dueTasks.length,
+      href: "/admin/tasks",
+      Icon: ListTodo,
+      accent: overdueCount > 0,
+    },
   ];
 
   return (
@@ -58,7 +72,7 @@ export default async function DashboardPage() {
         }
       />
 
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         {stats.map(({ label, value, href, Icon, accent }) => (
           <Link
             key={label}
@@ -69,10 +83,29 @@ export default async function DashboardPage() {
               <span className="text-sm font-medium text-muted-foreground">{label}</span>
               <Icon className="size-5 text-primary" aria-hidden />
             </div>
-            <p className="mt-3 font-heading text-4xl font-bold text-ink">{value}</p>
+            <p className="mt-3 font-heading text-3xl font-bold text-ink sm:text-4xl">{value}</p>
           </Link>
         ))}
       </div>
+
+      <section aria-labelledby="today-tasks" className="mt-8 rounded-3xl border bg-card">
+        <div className="flex items-center justify-between border-b px-5 py-4">
+          <h2 id="today-tasks" className="text-lg font-bold">
+            Задачи на сегодня
+          </h2>
+          <Link href="/admin/tasks" className="inline-flex items-center gap-1 text-sm font-medium text-primary">
+            Все задачи <ArrowRight className="size-4" />
+          </Link>
+        </div>
+        <div className="space-y-4 p-4 sm:p-5">
+          {dueTasks.length > 0 ? (
+            <TaskList tasks={dueTasks.slice(0, 8).map(toTaskView)} today={today} />
+          ) : (
+            <p className="text-sm text-muted-foreground">На сегодня задач нет.</p>
+          )}
+          <TaskForm today={today} />
+        </div>
+      </section>
 
       <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-[1.4fr_1fr]">
         <section aria-labelledby="upcoming" className="rounded-3xl border bg-card">
